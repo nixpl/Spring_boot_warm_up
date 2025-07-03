@@ -23,9 +23,9 @@ public class CityService {
     }
 
     public City getById(Long id) {
-        Optional<City> opt_customer = cityRepository.findById(id);
-        if(opt_customer.isPresent()){
-            return opt_customer.get();
+        Optional<City> opt_city = cityRepository.findById(id);
+        if(opt_city.isPresent()){
+            return opt_city.get();
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");
     }
@@ -72,7 +72,7 @@ public class CityService {
             return ResponseEntity.ok().build();
         }
         else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");
         }
     }
 }
