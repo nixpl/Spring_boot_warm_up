@@ -99,7 +99,10 @@ public class CustomerService {
 
             if(dto.activebool() != null && dto.activebool() != customer.getActivebool())
                 customer.setActivebool(dto.activebool());
+
+            customer.setLast_update(new Date());
             
+            repository.save(customer);
             return ResponseEntity.ok().body(customer);
         }
         else{
