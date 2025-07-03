@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CustomerCreateDTO;
+import com.example.demo.dto.CustomerUpdateDTO;
 import com.example.demo.model.Customer;
 import com.example.demo.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,8 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public void updateCustomer(@PathVariable Long id, Customer customer){
-        // TODO
+    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, CustomerUpdateDTO customer){
+        return customerService.update(id, customer);
     }
 
     @DeleteMapping("/{id}")

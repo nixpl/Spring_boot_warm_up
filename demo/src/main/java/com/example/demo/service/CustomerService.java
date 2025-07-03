@@ -1,12 +1,14 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.CustomerCreateDTO;
+import com.example.demo.dto.CustomerUpdateDTO;
 import com.example.demo.model.Customer;
 import com.example.demo.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -64,6 +66,44 @@ public class CustomerService {
             return ResponseEntity.ok().build();      }
         else{
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    public ResponseEntity<Customer> update(Long id, CustomerUpdateDTO dto) {
+        Optional<Customer> opt_customer = repository.findById(id);
+        if(opt_customer.isPresent()){
+            Customer customer = opt_customer.get();
+            if(dto.store_id() != null && dto.store_id() >= 0)
+                // TODO sprawdzenie czy istnieje
+                customer.setStore_id(dto.store_id());
+
+            if(dto.first_name() != null && !dto.first_name().isEmpty())
+                customer.setFirst_name(dto.first_name());
+
+            if(dto.last_name() != null && !dto.last_name().isEmpty())
+                customer.setLast_name(dto.last_name());
+
+            if(dto.email() != null && !dto.email().isEmpty()) {
+                if (repository.findByEmail(dto.email()).isPresent() && !dto.email().equals(customer.getEmail())) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email");
+                }
+                customer.setEmail(dto.email());
+            }
+
+            if(dto.address_id() != null && dto.address_id() >= 0)
+                // TODO sprawdzenie czy istnieje
+                customer.setAddress_id(dto.address_id());
+
+            if(dto.active() != null && dto.active() > 0) // ???
+                customer.setActive(dto.active());
+
+            if(dto.activebool() != null && dto.activebool() != customer.getActivebool())
+                customer.setActivebool(dto.activebool());
+            
+            return ResponseEntity.ok().body(customer);
+        }
+        else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");
         }
     }
 }
