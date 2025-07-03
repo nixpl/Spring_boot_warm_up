@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CustomerCreateDTO;
+import com.example.demo.dto.CustomerGetDTO;
 import com.example.demo.dto.CustomerUpdateDTO;
 import com.example.demo.model.Customer;
 import com.example.demo.service.CustomerService;
@@ -17,12 +18,12 @@ public class CustomerController {
     private CustomerService customerService;
 
     @GetMapping("/all")
-    public List<Customer> getCustomers(){
+    public List<CustomerGetDTO> getCustomers(){
         return customerService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomer(@PathVariable Long id){
+    public CustomerGetDTO getCustomer(@PathVariable Long id){
         return customerService.getById(id);
     }
 

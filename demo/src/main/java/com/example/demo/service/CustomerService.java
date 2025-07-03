@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.CustomerCreateDTO;
+import com.example.demo.dto.CustomerGetDTO;
 import com.example.demo.dto.CustomerUpdateDTO;
 import com.example.demo.model.Customer;
 import com.example.demo.repository.CustomerRepository;
@@ -19,14 +20,20 @@ public class CustomerService {
     @Autowired
     private CustomerRepository repository;
 
-    public List<Customer> getAll() {
-        return repository.findAll();
+    public List<CustomerGetDTO> getAll() {
+        List<Customer> customers = repository.findAll();
+        return customers.stream()
+                .map(c -> new CustomerGetDTO(c.getFirst_name(), c.getLast_name(), c.getEmail(), c.getAddress_id()))
+                .toList();
     }
 
-    public ResponseEntity<Customer> getById(Long id) {
-        return repository.findById(id)
-                    .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
+    public CustomerGetDTO getById(Long id) {
+        Optional<Customer> opt_customer = repository.findById(id);
+        if(opt_customer.isPresent()){
+            Customer c = opt_customer.get();
+            return new CustomerGetDTO(c.getFirst_name(), c.getLast_name(), c.getEmail(), c.getAddress_id());
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");
     }
 
     public ResponseEntity<Customer> create(CustomerCreateDTO dto) {
