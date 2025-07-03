@@ -40,6 +40,7 @@ public class Address {
     @Column(name = "last_update", nullable = false)
     private Date lastUpdate;
 
+    @PrePersist
     @PreUpdate
     protected void onUpdate() {
         this.lastUpdate = new Date();

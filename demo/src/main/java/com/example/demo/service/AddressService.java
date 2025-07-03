@@ -41,7 +41,6 @@ public class AddressService {
         address.setCityId(dto.cityId());
         address.setPostalCode(dto.postalCode());
         address.setPhone(dto.phone());
-        //last_update powinno sie zainicjalizowac z procedury z bazy danych
 
         Address saved = repository.save(address);
 
