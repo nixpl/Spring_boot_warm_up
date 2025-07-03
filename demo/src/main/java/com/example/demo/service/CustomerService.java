@@ -32,10 +32,10 @@ public class CustomerService {
     public ResponseEntity<Customer> create(CustomerCreateDTO dto) {
 
         if(repository.findByEmail(dto.email()).isPresent())
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is already taken");
 
         if(dto.first_name().isEmpty() || dto.last_name().isEmpty()|| dto.email().isEmpty())
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name and email cannot be empty");
 
         // TODO szukanie czy istnieje adress_id i store_id(?)
 
@@ -65,7 +65,7 @@ public class CustomerService {
             repository.delete(customer.get());
             return ResponseEntity.ok().build();      }
         else{
-            return ResponseEntity.notFound().build();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");
         }
     }
 
