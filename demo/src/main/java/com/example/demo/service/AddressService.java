@@ -1,9 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.AddressCreateDTO;
-import com.example.demo.dto.CustomerUpdateDTO;
+import com.example.demo.dto.AddressDTO;
 import com.example.demo.model.Address;
-import com.example.demo.model.Customer;
 import com.example.demo.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +26,7 @@ public class AddressService {
     }
 
 
-    public ResponseEntity<Address> create(AddressCreateDTO dto) {
+    public ResponseEntity<Address> create(AddressDTO dto) {
 
         if(repository.findByPhone(dto.phone()).isPresent())
             return ResponseEntity.badRequest().build();
@@ -59,7 +57,7 @@ public class AddressService {
         }
     }
 
-    public ResponseEntity<Address> update(Long id, AddressCreateDTO dto) {
+    public ResponseEntity<Address> update(Long id, AddressDTO dto) {
         Optional<Address> opt_address = repository.findById(id);
         if(opt_address.isPresent()){
             Address address = opt_address.get();

@@ -29,7 +29,7 @@ public class Address {
     private String district;
 
     @Column(name = "city_id", nullable = false)
-    private Integer cityId;
+    private Short cityId;
 
     @Column(name = "postal_code", length = 10)
     private String postalCode;

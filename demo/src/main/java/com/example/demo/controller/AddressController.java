@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AddressCreateDTO;
+import com.example.demo.dto.AddressDTO;
 import com.example.demo.model.Address;
 import com.example.demo.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +27,12 @@ public class AddressController {
     }
 
     @PostMapping
-    public ResponseEntity<Address> createAddress(AddressCreateDTO address){
+    public ResponseEntity<Address> createAddress(AddressDTO address){
         return addressService.create(address);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Address> updateAddress(@PathVariable Long id, AddressCreateDTO address){
+    public ResponseEntity<Address> updateAddress(@PathVariable Long id, AddressDTO address){
         return addressService.update(id, address);
     }
 

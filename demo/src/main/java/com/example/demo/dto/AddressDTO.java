@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record AddressCreateDTO(
+public record AddressDTO(
         @NotBlank(message = "Address line 1 cannot be empty")
         @Size(max = 50, message = "Address line 1 cannot exceed 255 characters")
         String address,
@@ -18,7 +18,7 @@ public record AddressCreateDTO(
 
         @NotNull(message = "City ID cannot be null")
         @Size(min = 0, message = "CityID cannot be smaller than 0")
-        Integer cityId,
+        Short cityId,
 
         @NotBlank(message = "Postal code cannot be empty")
         @Size(max = 10, message = "Postal code cannot exceed 10 characters")
