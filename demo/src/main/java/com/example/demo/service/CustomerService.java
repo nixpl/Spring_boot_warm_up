@@ -8,7 +8,9 @@ import com.example.demo.model.Address;
 import com.example.demo.model.Customer;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CustomerRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -61,17 +63,16 @@ public class CustomerService {
                             c.getAddress().getPhone()
                     ));
         }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");
+        throw new EntityNotFoundException("customer_id");
     }
 
     public ResponseEntity<Customer> create(CustomerCreateDTO dto) {
 
         if(customerRepository.findByEmail(dto.email()).isPresent())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is already taken");
+            throw new DataIntegrityViolationException("Email is already taken");
 
         if(dto.first_name().isEmpty() || dto.last_name().isEmpty()|| dto.email().isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name and email cannot be empty");
-
+            throw new DataIntegrityViolationException("Name and email cannot be empty");
         Customer customer = new Customer();
 
         customer.setStore_id(dto.store_id());
@@ -101,7 +102,7 @@ public class CustomerService {
             customerRepository.delete(customer.get());
             return ResponseEntity.ok().build();      }
         else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");
+            throw new EntityNotFoundException("customer_id");
         }
     }
 
@@ -120,7 +121,7 @@ public class CustomerService {
 
             if(dto.email() != null && !dto.email().isEmpty()) {
                 if (customerRepository.findByEmail(dto.email()).isPresent() && !dto.email().equals(customer.getEmail())) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email");
+                    throw new DataIntegrityViolationException("Wrong email");
                 }
                 customer.setEmail(dto.email());
             }
@@ -142,7 +143,7 @@ public class CustomerService {
             return ResponseEntity.ok().build();
         }
         else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");
+            throw new EntityNotFoundException("customer_id");
         }
     }
 }

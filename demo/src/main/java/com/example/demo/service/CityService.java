@@ -5,7 +5,9 @@ import com.example.demo.model.City;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CityRepository;
 import com.example.demo.repository.CountryRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,7 @@ public class CityService {
     }
 
     public City getById(Integer id) {
-        return cityRepository.findById(id).orElseThrow(() ->  new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id"));
+        return cityRepository.findById(id).orElseThrow(() ->  new EntityNotFoundException("city_id"));
 
 //        Optional<City> opt_city = cityRepository.findById(id);
 //        if(opt_city.isPresent()){
@@ -39,7 +41,7 @@ public class CityService {
 
     public ResponseEntity<City> create(CityDTO new_city) {
         if(new_city.country_id() == null || new_city.city() == null || new_city.city().isEmpty()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "City name and country cannot be empty");
+            throw new DataIntegrityViolationException("City name and country cannot be empty");
         }
 
         City city = new City();
@@ -65,7 +67,7 @@ public class CityService {
 
     public ResponseEntity<City> update(Integer  id, CityDTO dto) {
 
-        City city = cityRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id"));
+        City city = cityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("city_id"));
         Country country = countryRepository.findById(dto.country_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong country_id"));
         city.setCountry(country);
         city.setLast_update(new Date());
@@ -101,7 +103,7 @@ public class CityService {
             return ResponseEntity.ok().build();
         }
         else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");
+            throw new EntityNotFoundException("city_id");
         }
     }
 }

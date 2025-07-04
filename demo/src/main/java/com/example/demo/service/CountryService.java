@@ -3,11 +3,11 @@ package com.example.demo.service;
 import com.example.demo.dto.CountryDTO;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CountryRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -27,7 +27,7 @@ public class CountryService {
         if(opt_country.isPresent()){
             return opt_country.get();
         }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");
+        throw new EntityNotFoundException("city_id");
     }
 
     public ResponseEntity<Country> create(CountryDTO new_country) {
@@ -49,7 +49,7 @@ public class CountryService {
             return ResponseEntity.ok().build();
         }
         else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong country_id");
+            throw new EntityNotFoundException("country_id");
         }
     }
 
@@ -60,7 +60,7 @@ public class CountryService {
             return ResponseEntity.ok().build();
         }
         else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong country_id");
+            throw new EntityNotFoundException("country_id");
         }
     }
 }

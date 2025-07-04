@@ -5,11 +5,11 @@ import com.example.demo.model.Address;
 import com.example.demo.model.City;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CityRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +31,7 @@ public class AddressService {
 
     public AddressDTO getById(Integer id) {
         Address a = repository.findById(id).orElseThrow(()->
-                new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong address_id"));
+                new EntityNotFoundException("address_id"));
 
         return new AddressDTO(a.getAddress(),
                 a.getAddress2(), a.getDistrict(),
@@ -51,7 +51,7 @@ public class AddressService {
         address.setAddress2(dto.address2());
         address.setDistrict(dto.district());
 
-        City city = cityRepository.findById(dto.city_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id"));
+        City city = cityRepository.findById(dto.city_id()).orElseThrow(() -> new EntityNotFoundException("city_id"));
         address.setCity(city);
 
         address.setPostal_code(dto.postal_code());
@@ -90,7 +90,7 @@ public class AddressService {
 
             if(dto.city_id() != null) {
 
-                City city = cityRepository.findById(dto.city_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id"));
+                City city = cityRepository.findById(dto.city_id()).orElseThrow(() -> new EntityNotFoundException("city_id"));
                 address.setCity(city);
 
             }
@@ -103,7 +103,7 @@ public class AddressService {
             return ResponseEntity.ok().build();
         }
         else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong address_id");
+            throw new EntityNotFoundException("address_id");
         }
     }
 
