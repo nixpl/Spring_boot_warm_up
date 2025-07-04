@@ -26,6 +26,6 @@ public record CustomerUpdateDTO( @NotNull(message = "store_id cannot be null")
                                  Address address,
 
                                  @NotNull(message = "active cannot be null")
-                                 int active,
+                                 Integer active,
 
-                                boolean activebool) {}
+                                Boolean activebool) {}

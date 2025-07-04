@@ -7,9 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CustomerGetDTO(
-                             @NotNull(message = "store_id cannot be null")
-                             Short store_id,
-
                              @NotBlank(message = "first_name cannot be empty")
                              @Size(max = 45, message = "first_name cannot exceed 45 characters")
                              String first_name,
