@@ -52,10 +52,10 @@ public class CityService {
 
         city.setLast_update(new Date());
 
-        City saved = cityRepository.save(city);
+        cityRepository.save(city);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(saved);
+                .build();
     }
 
     public ResponseEntity<City> update(Integer  id, CityDTO dto) {
@@ -74,7 +74,7 @@ public class CityService {
             }
             city.setLast_update(new Date());
             cityRepository.save(city);
-            return ResponseEntity.ok().body(city);
+            return ResponseEntity.ok().build();
         }
         else{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");

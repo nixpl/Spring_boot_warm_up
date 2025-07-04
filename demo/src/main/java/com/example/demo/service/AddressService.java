@@ -60,11 +60,11 @@ public class AddressService {
         address.setPostal_code(dto.postal_code());
         address.setPhone(dto.phone());
 
-        Address saved = repository.save(address);
+        repository.save(address);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(saved);
+                .build();
     }
 
     public ResponseEntity<Address> delete(Integer id) {
@@ -105,7 +105,7 @@ public class AddressService {
             if(!dto.phone().isEmpty())
                 address.setPhone(dto.phone());
 
-            return ResponseEntity.ok().body(address);
+            return ResponseEntity.ok().build();
         }
         else{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong address_id");

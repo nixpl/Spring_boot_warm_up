@@ -87,11 +87,11 @@ public class CustomerService {
         customer.setCreate_date(new Date());
         customer.setLast_update(new Date());
 
-        Customer saved = customerRepository.save(customer);
+        customerRepository.save(customer);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(saved);
+                .build();
     }
 
 
@@ -139,7 +139,7 @@ public class CustomerService {
             customer.setLast_update(new Date());
 
             customerRepository.save(customer);
-            return ResponseEntity.ok().body(customer);
+            return ResponseEntity.ok().build();
         }
         else{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");

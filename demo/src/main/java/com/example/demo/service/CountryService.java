@@ -34,10 +34,10 @@ public class CountryService {
         Country country = new Country();
         country.setCountry(new_country.country());
         country.setLast_update(new Date());
-        Country saved = countryRepository.save(country);
+        countryRepository.save(country);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(saved);
+                .build();
     }
 
     public ResponseEntity<Country> update(Integer  id, CountryDTO dto) {
@@ -46,7 +46,7 @@ public class CountryService {
             Country country = optionalCountry.get();
             country.setCountry(dto.country());
             countryRepository.save(country);
-            return ResponseEntity.ok().body(country);
+            return ResponseEntity.ok().build();
         }
         else{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong country_id");
