@@ -21,7 +21,7 @@ public class CityController {
     }
 
     @GetMapping("/{id}")
-    public City getCityById(@PathVariable Long id){
+    public City getCityById(@PathVariable Integer  id){
         return cityService.getById(id);
     }
 
@@ -31,12 +31,12 @@ public class CityController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<City> updateCity(@PathVariable Long id, CityDTO city){
+    public ResponseEntity<City> updateCity(@PathVariable Integer  id, CityDTO city){
         return cityService.update(id, city);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<City> deleteCustomer(@PathVariable Long id){
+    public ResponseEntity<City> deleteCustomer(@PathVariable Integer  id){
         return cityService.delete(id);
     }
 }

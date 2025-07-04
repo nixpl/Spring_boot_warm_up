@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,10 @@ public class Customer {
     @Column(length = 45)
     private String email;
 
-    private Short address_id;
+    @NotNull(message = "Address cannot be null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
     private Boolean activebool;
 
@@ -36,5 +40,5 @@ public class Customer {
 
     private Date last_update;
 
-    private int active;
+    private Integer active;
 }

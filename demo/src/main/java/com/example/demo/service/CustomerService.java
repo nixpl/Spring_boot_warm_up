@@ -1,11 +1,17 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.AddressDTO;
 import com.example.demo.dto.CustomerCreateDTO;
 import com.example.demo.dto.CustomerGetDTO;
 import com.example.demo.dto.CustomerUpdateDTO;
+import com.example.demo.model.Address;
 import com.example.demo.model.Customer;
+import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CustomerRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,70 +24,90 @@ import java.util.Optional;
 @Service
 public class CustomerService {
     @Autowired
-    private CustomerRepository repository;
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
+
 
     public List<CustomerGetDTO> getAll() {
-        List<Customer> customers = repository.findAll();
+        List<Customer> customers = customerRepository.findAll();
         return customers.stream()
-                .map(c -> new CustomerGetDTO(c.getFirst_name(), c.getLast_name(), c.getEmail(), c.getAddress_id()))
+                .map(c ->
+                        new CustomerGetDTO(
+                                c.getFirst_name(),
+                                c.getLast_name(),
+                                c.getEmail(),
+                                new AddressDTO(c.getAddress().getAddress(),
+                                        c.getAddress().getAddress2(),
+                                        c.getAddress().getDistrict(),
+                                        c.getAddress().getCity().getCity_id(),
+                                        c.getAddress().getPostal_code(),
+                                        c.getAddress().getPhone()
+                                        )))
                 .toList();
     }
 
-    public CustomerGetDTO getById(Long id) {
-        Optional<Customer> opt_customer = repository.findById(id);
-        if(opt_customer.isPresent()){
-            Customer c = opt_customer.get();
-            return new CustomerGetDTO(c.getFirst_name(), c.getLast_name(), c.getEmail(), c.getAddress_id());
-        }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");
+    public CustomerGetDTO getById(Integer id) {
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("customer_id"));
+        return new CustomerGetDTO(
+                customer.getFirst_name(),
+                customer.getLast_name(),
+                customer.getEmail(),
+                new AddressDTO(customer.getAddress().getAddress(),
+                        customer.getAddress().getAddress2(),
+                        customer.getAddress().getDistrict(),
+                        customer.getAddress().getCity().getCity_id(),
+                        customer.getAddress().getPostal_code(),
+                        customer.getAddress().getPhone()
+                ));
     }
 
     public ResponseEntity<Customer> create(CustomerCreateDTO dto) {
 
-        if(repository.findByEmail(dto.email()).isPresent())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is already taken");
+        if(customerRepository.findByEmail(dto.email()).isPresent())
+            throw new DataIntegrityViolationException("Email is already taken");
 
         if(dto.first_name().isEmpty() || dto.last_name().isEmpty()|| dto.email().isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name and email cannot be empty");
-
-        // TODO szukanie czy istnieje adress_id i store_id(?)
-
+            throw new DataIntegrityViolationException("Name and email cannot be empty");
         Customer customer = new Customer();
 
         customer.setStore_id(dto.store_id());
         customer.setFirst_name(dto.first_name());
         customer.setLast_name(dto.last_name());
         customer.setEmail(dto.email());
-        customer.setAddress_id(dto.address_id());
+
+        Address address = addressRepository.findById(dto.address_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong address_id"));
+        customer.setAddress(address);
+
         customer.setActive(dto.active());
         customer.setActivebool(true);
         customer.setCreate_date(new Date());
         customer.setLast_update(new Date());
 
-        Customer saved = repository.save(customer);
+        customerRepository.save(customer);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(saved);
+                .build();
     }
 
 
-    public ResponseEntity<Customer> delete(Long id) {
-        Optional<Customer> customer = repository.findById(id);
+    public ResponseEntity<Customer> delete(Integer id) {
+        Optional<Customer> customer = customerRepository.findById(id);
         if(customer.isPresent()){
-            repository.delete(customer.get());
+            customerRepository.delete(customer.get());
             return ResponseEntity.ok().build();      }
         else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");
+            throw new EntityNotFoundException("customer_id");
         }
     }
 
-    public ResponseEntity<Customer> update(Long id, CustomerUpdateDTO dto) {
-        Optional<Customer> opt_customer = repository.findById(id);
+    public ResponseEntity<Customer> update(Integer id, CustomerUpdateDTO dto) {
+        Optional<Customer> opt_customer = customerRepository.findById(id);
         if(opt_customer.isPresent()){
             Customer customer = opt_customer.get();
             if(dto.store_id() != null && dto.store_id() >= 0)
-                // TODO sprawdzenie czy istnieje
                 customer.setStore_id(dto.store_id());
 
             if(dto.first_name() != null && !dto.first_name().isEmpty())
@@ -91,29 +117,30 @@ public class CustomerService {
                 customer.setLast_name(dto.last_name());
 
             if(dto.email() != null && !dto.email().isEmpty()) {
-                if (repository.findByEmail(dto.email()).isPresent() && !dto.email().equals(customer.getEmail())) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email");
+                if (customerRepository.findByEmail(dto.email()).isPresent() && !dto.email().equals(customer.getEmail())) {
+                    throw new DataIntegrityViolationException("Wrong email");
                 }
                 customer.setEmail(dto.email());
             }
 
-            if(dto.address_id() != null && dto.address_id() >= 0)
-                // TODO sprawdzenie czy istnieje
-                customer.setAddress_id(dto.address_id());
+            if(dto.address_id() != null) {
+                Address address = addressRepository.findById(dto.address_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong address_id"));
+                customer.setAddress(address);
+            }
 
-            if(dto.active() != null && dto.active() > 0) // ???
+            if(dto.active() != null)
                 customer.setActive(dto.active());
 
             if(dto.activebool() != null && dto.activebool() != customer.getActivebool())
                 customer.setActivebool(dto.activebool());
 
             customer.setLast_update(new Date());
-            
-            repository.save(customer);
-            return ResponseEntity.ok().body(customer);
+
+            customerRepository.save(customer);
+            return ResponseEntity.ok().build();
         }
         else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");
+            throw new EntityNotFoundException("customer_id");
         }
     }
 }

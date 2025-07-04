@@ -16,33 +16,33 @@ import java.util.Date;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "address_id")
-    private Integer addressId;
+    private Integer address_id;
 
-    @Column(name = "address", length = 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String address;
 
-    @Column(name = "address2", length = 50)
+    @Column(length = 50)
     private String address2;
 
-    @Column(name = "district", length = 20, nullable = false)
+    @Column(length = 20, nullable = false)
     private String district;
 
-    @Column(name = "city_id", nullable = false)
-    private Integer cityId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id")
+    private City city;
 
-    @Column(name = "postal_code", length = 10)
-    private String postalCode;
+    @Column(length = 10)
+    private String postal_code;
 
-    @Column(name = "phone", length = 20, nullable = false)
+    @Column(length = 20, nullable = false)
     private String phone;
 
-    @Column(name = "last_update", nullable = false)
-    private Date lastUpdate;
+    @Column(nullable = false)
+    private Date last_update;
 
     @PrePersist
     @PreUpdate
     protected void onUpdate() {
-        this.lastUpdate = new Date();
+        this.last_update = new Date();
     }
 }

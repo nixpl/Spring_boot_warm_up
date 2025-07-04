@@ -1,15 +1,15 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.AddressCreateDTO;
-import com.example.demo.dto.CustomerUpdateDTO;
+import com.example.demo.dto.AddressDTO;
 import com.example.demo.model.Address;
-import com.example.demo.model.Customer;
+import com.example.demo.model.City;
 import com.example.demo.repository.AddressRepository;
+import com.example.demo.repository.CityRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,17 +18,29 @@ import java.util.Optional;
 public class AddressService {
     @Autowired
     private AddressRepository repository;
+    @Autowired
+    private CityRepository cityRepository;
 
-    public List<Address> getAll() { return repository.findAll(); }
+    public List<AddressDTO> getAll() {
+        List<Address> addresses = repository.findAll();
+        return addresses.stream().map(a -> new AddressDTO(a.getAddress(),
+                a.getAddress2(), a.getDistrict(),
+                a.getCity().getCity_id(),
+                a.getPostal_code(), a.getPhone())).toList();
+    }
 
-    public ResponseEntity<Address> getById(Long id) {
-        return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public AddressDTO getById(Integer id) {
+        Address a = repository.findById(id).orElseThrow(()->
+                new EntityNotFoundException("address_id"));
+
+        return new AddressDTO(a.getAddress(),
+                a.getAddress2(), a.getDistrict(),
+                a.getCity().getCity_id(),
+                a.getPostal_code(), a.getPhone());
     }
 
 
-    public ResponseEntity<Address> create(AddressCreateDTO dto) {
+    public ResponseEntity<Address> create(AddressDTO dto) {
 
         if(repository.findByPhone(dto.phone()).isPresent())
             return ResponseEntity.badRequest().build();
@@ -38,18 +50,21 @@ public class AddressService {
         address.setAddress(dto.address());
         address.setAddress2(dto.address2());
         address.setDistrict(dto.district());
-        address.setCityId(dto.cityId());
-        address.setPostalCode(dto.postalCode());
+
+        City city = cityRepository.findById(dto.city_id()).orElseThrow(() -> new EntityNotFoundException("city_id"));
+        address.setCity(city);
+
+        address.setPostal_code(dto.postal_code());
         address.setPhone(dto.phone());
 
-        Address saved = repository.save(address);
+        repository.save(address);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(saved);
+                .build();
     }
 
-    public ResponseEntity<Address> delete(Long id) {
+    public ResponseEntity<Address> delete(Integer id) {
         Optional<Address> address = repository.findById(id);
         if(address.isPresent()){
             repository.delete(address.get());
@@ -59,7 +74,7 @@ public class AddressService {
         }
     }
 
-    public ResponseEntity<Address> update(Long id, AddressCreateDTO dto) {
+    public ResponseEntity<Address> update(Integer id, AddressDTO dto) {
         Optional<Address> opt_address = repository.findById(id);
         if(opt_address.isPresent()){
             Address address = opt_address.get();
@@ -73,19 +88,22 @@ public class AddressService {
             if(!dto.district().isEmpty())
                 address.setDistrict(dto.district());
 
-            if(dto.cityId() != null)
-                address.setCityId(dto.cityId());
+            if(dto.city_id() != null) {
 
-            if(!dto.postalCode().isEmpty())
-                address.setPostalCode(dto.postalCode());
+                City city = cityRepository.findById(dto.city_id()).orElseThrow(() -> new EntityNotFoundException("city_id"));
+                address.setCity(city);
+
+            }
+            if(!dto.postal_code().isEmpty())
+                address.setPostal_code(dto.postal_code());
 
             if(!dto.phone().isEmpty())
                 address.setPhone(dto.phone());
 
-            return ResponseEntity.ok().body(address);
+            return ResponseEntity.ok().build();
         }
         else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong address_id");
+            throw new EntityNotFoundException("address_id");
         }
     }
 
