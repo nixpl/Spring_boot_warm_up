@@ -5,6 +5,7 @@ import com.example.demo.dto.CustomerGetDTO;
 import com.example.demo.dto.CustomerUpdateDTO;
 import com.example.demo.model.Customer;
 import com.example.demo.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(CustomerCreateDTO customer){
+    public ResponseEntity<Customer> createCustomer(@Valid CustomerCreateDTO customer){
         return customerService.create(customer);
     }
 
