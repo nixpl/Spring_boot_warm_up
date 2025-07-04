@@ -1,9 +1,31 @@
 package com.example.demo.dto;
 
-public record CustomerUpdateDTO(Short store_id,
-                                String first_name,
-                                String last_name,
-                                String email,
-                                Short address_id,
-                                Integer active,
-                                Boolean activebool) {}
+import com.example.demo.model.Address;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public record CustomerUpdateDTO( @NotNull(message = "store_id cannot be null")
+                                 Short store_id,
+
+                                 @NotBlank(message = "first_name cannot be empty")
+                                 @Size(max = 45, message = "first_name cannot exceed 45 characters")
+                                 String first_name,
+
+                                 @NotBlank(message = "last_name cannot be empty")
+                                 @Size(max = 45, message = "last_name cannot exceed 45 characters")
+                                 String last_name,
+
+                                 @NotBlank(message = "email cannot be empty")
+                                 @Size(max = 45, message = "email cannot exceed 45 characters")
+                                 @Email
+                                 String email,
+
+                                 @NotNull(message = "address cannot be null")
+                                 Address address,
+
+                                 @NotNull(message = "active cannot be null")
+                                 int active,
+
+                                boolean activebool) {}

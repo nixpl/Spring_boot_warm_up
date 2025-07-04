@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CustomerCreateDTO;
+import com.example.demo.dto.CustomerCreateNoAddressDTO;
 import com.example.demo.dto.CustomerGetDTO;
 import com.example.demo.dto.CustomerUpdateDTO;
 import com.example.demo.model.Customer;
@@ -23,7 +24,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public CustomerGetDTO getCustomer(@PathVariable Long id){
+    public CustomerGetDTO getCustomer(@PathVariable Integer id){
         return customerService.getById(id);
     }
 
@@ -32,13 +33,18 @@ public class CustomerController {
         return customerService.create(customer);
     }
 
+    @PostMapping("/address{address_id}")
+    public ResponseEntity<Customer> createCustomerWithExistingAddress(@PathVariable Integer address_id, CustomerCreateNoAddressDTO customer){
+        return customerService.createWithExistingAddress(address_id, customer);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, CustomerUpdateDTO customer){
+    public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, CustomerUpdateDTO customer){
         return customerService.update(id, customer);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Customer> deleteCustomer(@PathVariable Long id){
+    public ResponseEntity<Customer> deleteCustomer(@PathVariable Integer id){
         return customerService.delete(id);
     }
 }

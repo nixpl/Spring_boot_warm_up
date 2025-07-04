@@ -19,7 +19,7 @@ public class AddressService {
 
     public List<Address> getAll() { return repository.findAll(); }
 
-    public ResponseEntity<Address> getById(Long id) {
+    public ResponseEntity<Address> getById(Integer id) {
         return repository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -36,8 +36,8 @@ public class AddressService {
         address.setAddress(dto.address());
         address.setAddress2(dto.address2());
         address.setDistrict(dto.district());
-        address.setCityId(dto.cityId());
-        address.setPostalCode(dto.postalCode());
+        address.setCity(dto.city());
+        address.setPostal_code(dto.postal_code());
         address.setPhone(dto.phone());
 
         Address saved = repository.save(address);
@@ -47,7 +47,7 @@ public class AddressService {
                 .body(saved);
     }
 
-    public ResponseEntity<Address> delete(Long id) {
+    public ResponseEntity<Address> delete(Integer id) {
         Optional<Address> address = repository.findById(id);
         if(address.isPresent()){
             repository.delete(address.get());
@@ -57,7 +57,7 @@ public class AddressService {
         }
     }
 
-    public ResponseEntity<Address> update(Long id, AddressDTO dto) {
+    public ResponseEntity<Address> update(Integer id, AddressDTO dto) {
         Optional<Address> opt_address = repository.findById(id);
         if(opt_address.isPresent()){
             Address address = opt_address.get();
@@ -71,11 +71,11 @@ public class AddressService {
             if(!dto.district().isEmpty())
                 address.setDistrict(dto.district());
 
-            if(dto.cityId() != null)
-                address.setCityId(dto.cityId());
+            if(dto.city() != null)
+                address.setCity(dto.city());
 
-            if(!dto.postalCode().isEmpty())
-                address.setPostalCode(dto.postalCode());
+            if(!dto.postal_code().isEmpty())
+                address.setPostal_code(dto.postal_code());
 
             if(!dto.phone().isEmpty())
                 address.setPhone(dto.phone());

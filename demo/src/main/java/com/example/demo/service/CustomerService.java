@@ -1,9 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.CustomerCreateDTO;
+import com.example.demo.dto.CustomerCreateNoAddressDTO;
 import com.example.demo.dto.CustomerGetDTO;
 import com.example.demo.dto.CustomerUpdateDTO;
+import com.example.demo.model.Address;
 import com.example.demo.model.Customer;
+import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,27 +21,31 @@ import java.util.Optional;
 @Service
 public class CustomerService {
     @Autowired
-    private CustomerRepository repository;
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
+
 
     public List<CustomerGetDTO> getAll() {
-        List<Customer> customers = repository.findAll();
+        List<Customer> customers = customerRepository.findAll();
         return customers.stream()
-                .map(c -> new CustomerGetDTO(c.getFirst_name(), c.getLast_name(), c.getEmail(), c.getAddress_id()))
+                .map(c -> new CustomerGetDTO(c.getFirst_name(), c.getLast_name(), c.getEmail(), c.getAddress()))
                 .toList();
     }
 
-    public CustomerGetDTO getById(Long id) {
-        Optional<Customer> opt_customer = repository.findById(id);
+    public CustomerGetDTO getById(Integer id) {
+        Optional<Customer> opt_customer = customerRepository.findById(id);
         if(opt_customer.isPresent()){
             Customer c = opt_customer.get();
-            return new CustomerGetDTO(c.getFirst_name(), c.getLast_name(), c.getEmail(), c.getAddress_id());
+            return new CustomerGetDTO(c.getFirst_name(), c.getLast_name(), c.getEmail(), c.getAddress());
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");
     }
 
     public ResponseEntity<Customer> create(CustomerCreateDTO dto) {
 
-        if(repository.findByEmail(dto.email()).isPresent())
+        if(customerRepository.findByEmail(dto.email()).isPresent())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is already taken");
 
         if(dto.first_name().isEmpty() || dto.last_name().isEmpty()|| dto.email().isEmpty())
@@ -52,32 +59,42 @@ public class CustomerService {
         customer.setFirst_name(dto.first_name());
         customer.setLast_name(dto.last_name());
         customer.setEmail(dto.email());
-        customer.setAddress_id(dto.address_id());
+
+        customer.setAddress(dto.address());
+
         customer.setActive(dto.active());
         customer.setActivebool(true);
         customer.setCreate_date(new Date());
         customer.setLast_update(new Date());
 
-        Customer saved = repository.save(customer);
+        Customer saved = customerRepository.save(customer);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(saved);
     }
 
+    public ResponseEntity<Customer> createWithExistingAddress(Integer address_id ,CustomerCreateNoAddressDTO dto) {
+        Optional<Address> opt_address = addressRepository.findById(address_id);
+        Address address = opt_address.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong address_id"));
+        CustomerCreateDTO dto_with_address = new CustomerCreateDTO(dto.store_id(), dto.first_name(), dto.last_name(), dto.email(), address, dto.active());
 
-    public ResponseEntity<Customer> delete(Long id) {
-        Optional<Customer> customer = repository.findById(id);
+        return create(dto_with_address);
+    }
+
+
+    public ResponseEntity<Customer> delete(Integer id) {
+        Optional<Customer> customer = customerRepository.findById(id);
         if(customer.isPresent()){
-            repository.delete(customer.get());
+            customerRepository.delete(customer.get());
             return ResponseEntity.ok().build();      }
         else{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong customer_id");
         }
     }
 
-    public ResponseEntity<Customer> update(Long id, CustomerUpdateDTO dto) {
-        Optional<Customer> opt_customer = repository.findById(id);
+    public ResponseEntity<Customer> update(Integer id, CustomerUpdateDTO dto) {
+        Optional<Customer> opt_customer = customerRepository.findById(id);
         if(opt_customer.isPresent()){
             Customer customer = opt_customer.get();
             if(dto.store_id() != null && dto.store_id() >= 0)
@@ -91,15 +108,15 @@ public class CustomerService {
                 customer.setLast_name(dto.last_name());
 
             if(dto.email() != null && !dto.email().isEmpty()) {
-                if (repository.findByEmail(dto.email()).isPresent() && !dto.email().equals(customer.getEmail())) {
+                if (customerRepository.findByEmail(dto.email()).isPresent() && !dto.email().equals(customer.getEmail())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email");
                 }
                 customer.setEmail(dto.email());
             }
 
-            if(dto.address_id() != null && dto.address_id() >= 0)
+            if(dto.address() != null && dto.address().getAddress_id() >= 0)
                 // TODO sprawdzenie czy istnieje
-                customer.setAddress_id(dto.address_id());
+                customer.setAddress(dto.address());
 
             if(dto.active() != null && dto.active() > 0) // ???
                 customer.setActive(dto.active());
@@ -109,7 +126,7 @@ public class CustomerService {
 
             customer.setLast_update(new Date());
             
-            repository.save(customer);
+            customerRepository.save(customer);
             return ResponseEntity.ok().body(customer);
         }
         else{
