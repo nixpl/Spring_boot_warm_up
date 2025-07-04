@@ -2,7 +2,9 @@ package com.example.demo.service;
 
 import com.example.demo.dto.AddressDTO;
 import com.example.demo.model.Address;
+import com.example.demo.model.City;
 import com.example.demo.repository.AddressRepository;
+import com.example.demo.repository.CityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,8 @@ import java.util.Optional;
 public class AddressService {
     @Autowired
     private AddressRepository repository;
+    @Autowired
+    private CityRepository cityRepository;
 
     public List<Address> getAll() { return repository.findAll(); }
 
@@ -36,7 +40,13 @@ public class AddressService {
         address.setAddress(dto.address());
         address.setAddress2(dto.address2());
         address.setDistrict(dto.district());
-        address.setCity(dto.city());
+        Optional<City> city = cityRepository.findById(dto.city_id());
+        if(city.isPresent()){
+            address.setCity(city.get());
+        }
+        else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");
+        }
         address.setPostal_code(dto.postal_code());
         address.setPhone(dto.phone());
 
@@ -71,9 +81,14 @@ public class AddressService {
             if(!dto.district().isEmpty())
                 address.setDistrict(dto.district());
 
-            if(dto.city() != null)
-                address.setCity(dto.city());
-
+            if(dto.city_id() != null) {
+                Optional<City> city = cityRepository.findById(dto.city_id());
+                if (city.isPresent()) {
+                    address.setCity(city.get());
+                } else {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");
+                }
+            }
             if(!dto.postal_code().isEmpty())
                 address.setPostal_code(dto.postal_code());
 

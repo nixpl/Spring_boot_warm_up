@@ -1,6 +1,5 @@
 package com.example.demo.dto;
 
-import com.example.demo.model.Address;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,8 +24,8 @@ public record CustomerCreateDTO(
         String email,
 
         @NotNull(message = "address cannot be null")
-        Address address,
+        Integer address_id,
 
         @NotNull(message = "active cannot be null")
-        int active) {
+        Integer active) {
 }

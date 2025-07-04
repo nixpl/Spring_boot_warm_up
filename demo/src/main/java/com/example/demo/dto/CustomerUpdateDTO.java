@@ -23,7 +23,7 @@ public record CustomerUpdateDTO( @NotNull(message = "store_id cannot be null")
                                  String email,
 
                                  @NotNull(message = "address cannot be null")
-                                 Address address,
+                                 Integer address_id,
 
                                  @NotNull(message = "active cannot be null")
                                  Integer active,

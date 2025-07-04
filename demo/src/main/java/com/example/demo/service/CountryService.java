@@ -22,7 +22,7 @@ public class CountryService {
         return countryRepository.findAll();
     }
 
-    public Country getById(Long id) {
+    public Country getById(Integer  id) {
         Optional<Country> opt_country = countryRepository.findById(id);
         if(opt_country.isPresent()){
             return opt_country.get();
@@ -40,7 +40,7 @@ public class CountryService {
                 .body(saved);
     }
 
-    public ResponseEntity<Country> update(Long id, CountryDTO dto) {
+    public ResponseEntity<Country> update(Integer  id, CountryDTO dto) {
         Optional<Country> optionalCountry = countryRepository.findById(id);
         if(optionalCountry.isPresent()){
             Country country = optionalCountry.get();
@@ -53,7 +53,7 @@ public class CountryService {
         }
     }
 
-    public ResponseEntity<Country> delete(Long id) {
+    public ResponseEntity<Country> delete(Integer  id) {
         Optional<Country> country = countryRepository.findById(id);
         if(country.isPresent()){
             countryRepository.delete(country.get());

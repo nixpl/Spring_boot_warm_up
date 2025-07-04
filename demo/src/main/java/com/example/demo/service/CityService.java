@@ -2,7 +2,9 @@ package com.example.demo.service;
 
 import com.example.demo.dto.CityDTO;
 import com.example.demo.model.City;
+import com.example.demo.model.Country;
 import com.example.demo.repository.CityRepository;
+import com.example.demo.repository.CountryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +20,14 @@ public class CityService {
     @Autowired
     private CityRepository cityRepository;
 
+    @Autowired
+    private CountryRepository countryRepository;
+
     public List<City> getAll() {
         return cityRepository.findAll();
     }
 
-    public City getById(Long id) {
+    public City getById(Integer id) {
         Optional<City> opt_city = cityRepository.findById(id);
         if(opt_city.isPresent()){
             return opt_city.get();
@@ -37,7 +42,14 @@ public class CityService {
 
         City city = new City();
         city.setCity(new_city.city());
-        city.setCountry_id(new_city.country_id());
+        Optional<Country> country = countryRepository.findById(new_city.country_id());
+        if(country.isPresent()){
+            city.setCountry(country.get());
+        }
+        else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong country_id");
+        }
+
         city.setLast_update(new Date());
 
         City saved = cityRepository.save(city);
@@ -46,13 +58,17 @@ public class CityService {
                 .body(saved);
     }
 
-    public ResponseEntity<City> update(Long id, CityDTO dto) {
+    public ResponseEntity<City> update(Integer  id, CityDTO dto) {
         Optional<City> opt_city = cityRepository.findById(id);
         if(opt_city.isPresent()){
             City city = opt_city.get();
-            if(dto.country_id()!=null)
-                // TODO sprawdzenie cyz istnieje
-                city.setCountry_id(dto.country_id());
+            Optional<Country> country = countryRepository.findById(dto.country_id());
+            if(country.isPresent()){
+                city.setCountry(country.get());
+            }
+            else{
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong country_id");
+            }
             if(dto.city()!=null && !dto.city().isEmpty()){
                 city.setCity(dto.city());
             }
@@ -65,7 +81,7 @@ public class CityService {
         }
     }
 
-    public ResponseEntity<City> delete(Long id) {
+    public ResponseEntity<City> delete(Integer id) {
         Optional<City> city = cityRepository.findById(id);
         if(city.isPresent()){
             cityRepository.delete(city.get());

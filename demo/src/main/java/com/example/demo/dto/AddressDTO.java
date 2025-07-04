@@ -1,6 +1,5 @@
 package com.example.demo.dto;
 
-import com.example.demo.model.City;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -19,7 +18,7 @@ public record AddressDTO(
 
         @NotNull(message = "City cannot be null")
         @Size(min = 0, message = "CityID cannot be smaller than 0")
-        City city,
+        Integer city_id,
 
         @NotBlank(message = "Postal code cannot be empty")
         @Size(max = 10, message = "Postal code cannot exceed 10 characters")

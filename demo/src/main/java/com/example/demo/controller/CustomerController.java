@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CustomerCreateDTO;
-import com.example.demo.dto.CustomerCreateNoAddressDTO;
 import com.example.demo.dto.CustomerGetDTO;
 import com.example.demo.dto.CustomerUpdateDTO;
 import com.example.demo.model.Customer;
@@ -31,11 +30,6 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<Customer> createCustomer(CustomerCreateDTO customer){
         return customerService.create(customer);
-    }
-
-    @PostMapping("/address{address_id}")
-    public ResponseEntity<Customer> createCustomerWithExistingAddress(@PathVariable Integer address_id, CustomerCreateNoAddressDTO customer){
-        return customerService.createWithExistingAddress(address_id, customer);
     }
 
     @PutMapping("/{id}")

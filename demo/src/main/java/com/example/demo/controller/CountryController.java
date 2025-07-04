@@ -21,7 +21,7 @@ public class CountryController {
     }
 
     @GetMapping("/{id}")
-    public Country getCountryById(@PathVariable Long id){
+    public Country getCountryById(@PathVariable Integer id){
         return countryService.getById(id);
     }
 
@@ -31,12 +31,12 @@ public class CountryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Country> updateCountry(@PathVariable Long id, CountryDTO country){
+    public ResponseEntity<Country> updateCountry(@PathVariable Integer  id, CountryDTO country){
         return countryService.update(id, country);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Country> deleteCountry(@PathVariable Long id){
+    public ResponseEntity<Country> deleteCountry(@PathVariable Integer  id){
         return countryService.delete(id);
     }
 }

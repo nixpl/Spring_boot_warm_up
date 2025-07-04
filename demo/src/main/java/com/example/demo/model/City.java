@@ -25,6 +25,8 @@ public class City {
     private String city;
 
     @NotNull(message = "Country_id cannot be null")
-    private Short country_id;
+    @ManyToOne
+    @JoinColumn(name = "country_id")
+    private Country country;
     private Date last_update;
 }

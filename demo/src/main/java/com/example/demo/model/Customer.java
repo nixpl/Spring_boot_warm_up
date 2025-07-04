@@ -31,6 +31,7 @@ public class Customer {
 
     @NotNull(message = "Address cannot be null")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
     private Address address;
 
     private Boolean activebool;
@@ -39,5 +40,5 @@ public class Customer {
 
     private Date last_update;
 
-    private int active;
+    private Integer active;
 }
