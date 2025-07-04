@@ -9,13 +9,11 @@ import com.example.demo.model.Customer;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -77,7 +75,7 @@ public class CustomerService {
         customer.setLast_name(dto.last_name());
         customer.setEmail(dto.email());
 
-        Address address = addressRepository.findById(dto.address_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong address_id"));
+        Address address = addressRepository.findById(dto.address_id()).orElseThrow(() ->new EntityNotFoundException("address_id"));
         customer.setAddress(address);
 
         customer.setActive(dto.active());
@@ -124,7 +122,7 @@ public class CustomerService {
             }
 
             if(dto.address_id() != null) {
-                Address address = addressRepository.findById(dto.address_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong address_id"));
+                Address address = addressRepository.findById(dto.address_id()).orElseThrow(() -> new EntityNotFoundException("address_id"));
                 customer.setAddress(address);
             }
 

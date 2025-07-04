@@ -11,7 +11,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -40,7 +39,7 @@ public class CityService {
 
         City city = new City();
         city.setCity(new_city.city());
-        Country country = countryRepository.findById(new_city.country_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong country_id"));
+        Country country = countryRepository.findById(new_city.country_id()).orElseThrow(() -> new EntityNotFoundException("country_id"));
         city.setCountry(country);
         city.setLast_update(new Date());
 
@@ -52,8 +51,8 @@ public class CityService {
 
     public ResponseEntity<City> update(Integer  id, CityDTO dto) {
 
-        City city = cityRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id"));
-        Country country = countryRepository.findById(dto.country_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong country_id"));
+        City city = cityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("city_id"));
+        Country country = countryRepository.findById(dto.country_id()).orElseThrow(() -> new EntityNotFoundException("country_id"));
         city.setCountry(country);
         city.setLast_update(new Date());
         cityRepository.save(city);
@@ -67,7 +66,7 @@ public class CityService {
             return ResponseEntity.ok().build();
         }
         else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");
+            throw new EntityNotFoundException("city_id");
         }
     }
 }
