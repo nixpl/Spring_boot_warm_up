@@ -50,13 +50,10 @@ public class AddressService {
         address.setAddress(dto.address());
         address.setAddress2(dto.address2());
         address.setDistrict(dto.district());
-        Optional<City> city = cityRepository.findById(dto.city_id());
-        if(city.isPresent()){
-            address.setCity(city.get());
-        }
-        else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");
-        }
+
+        City city = cityRepository.findById(dto.city_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id"));
+        address.setCity(city);
+
         address.setPostal_code(dto.postal_code());
         address.setPhone(dto.phone());
 
@@ -92,12 +89,10 @@ public class AddressService {
                 address.setDistrict(dto.district());
 
             if(dto.city_id() != null) {
-                Optional<City> city = cityRepository.findById(dto.city_id());
-                if (city.isPresent()) {
-                    address.setCity(city.get());
-                } else {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");
-                }
+
+                City city = cityRepository.findById(dto.city_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id"));
+                address.setCity(city);
+
             }
             if(!dto.postal_code().isEmpty())
                 address.setPostal_code(dto.postal_code());
