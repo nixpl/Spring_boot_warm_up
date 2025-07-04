@@ -23,11 +23,7 @@ public class CountryService {
     }
 
     public Country getById(Integer  id) {
-        Optional<Country> opt_country = countryRepository.findById(id);
-        if(opt_country.isPresent()){
-            return opt_country.get();
-        }
-        throw new EntityNotFoundException("city_id");
+        return countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("city_id"));
     }
 
     public ResponseEntity<Country> create(CountryDTO new_country) {
@@ -41,16 +37,10 @@ public class CountryService {
     }
 
     public ResponseEntity<Country> update(Integer  id, CountryDTO dto) {
-        Optional<Country> optionalCountry = countryRepository.findById(id);
-        if(optionalCountry.isPresent()){
-            Country country = optionalCountry.get();
-            country.setCountry(dto.country());
-            countryRepository.save(country);
-            return ResponseEntity.ok().build();
-        }
-        else{
-            throw new EntityNotFoundException("country_id");
-        }
+        Country country = countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("country_id"));
+        country.setCountry(dto.country());
+        countryRepository.save(country);
+        return ResponseEntity.ok().build();
     }
 
     public ResponseEntity<Country> delete(Integer  id) {

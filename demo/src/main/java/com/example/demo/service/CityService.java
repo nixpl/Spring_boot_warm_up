@@ -31,12 +31,6 @@ public class CityService {
 
     public City getById(Integer id) {
         return cityRepository.findById(id).orElseThrow(() ->  new EntityNotFoundException("city_id"));
-
-//        Optional<City> opt_city = cityRepository.findById(id);
-//        if(opt_city.isPresent()){
-//            return opt_city.get();
-//        }
-//        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");
     }
 
     public ResponseEntity<City> create(CityDTO new_city) {
@@ -48,15 +42,6 @@ public class CityService {
         city.setCity(new_city.city());
         Country country = countryRepository.findById(new_city.country_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong country_id"));
         city.setCountry(country);
-
-//        Optional<Country> country = countryRepository.findById(new_city.country_id());
-//        if(country.isPresent()){
-//            city.setCountry(country.get());
-//        }
-//        else{
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong country_id");
-//        }
-
         city.setLast_update(new Date());
 
         cityRepository.save(city);
@@ -67,33 +52,12 @@ public class CityService {
 
     public ResponseEntity<City> update(Integer  id, CityDTO dto) {
 
-        City city = cityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("city_id"));
+        City city = cityRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id"));
         Country country = countryRepository.findById(dto.country_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong country_id"));
         city.setCountry(country);
         city.setLast_update(new Date());
         cityRepository.save(city);
         return ResponseEntity.ok().build();
-
-//        Optional<City> opt_city = cityRepository.findById(id);
-//        if(opt_city.isPresent()){
-//            City city = opt_city.get();
-//            Optional<Country> country = countryRepository.findById(dto.country_id());
-//            if(country.isPresent()){
-//                city.setCountry(country.get());
-//            }
-//            else{
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong country_id");
-//            }
-//            if(dto.city()!=null && !dto.city().isEmpty()){
-//                city.setCity(dto.city());
-//            }
-//            city.setLast_update(new Date());
-//            cityRepository.save(city);
-//            return ResponseEntity.ok().body(city);
-//        }
-//        else{
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");
-//        }
     }
 
     public ResponseEntity<City> delete(Integer id) {
@@ -103,7 +67,7 @@ public class CityService {
             return ResponseEntity.ok().build();
         }
         else{
-            throw new EntityNotFoundException("city_id");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong city_id");
         }
     }
 }

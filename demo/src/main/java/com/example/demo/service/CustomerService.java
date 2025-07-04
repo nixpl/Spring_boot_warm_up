@@ -9,6 +9,7 @@ import com.example.demo.model.Customer;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -48,22 +49,18 @@ public class CustomerService {
     }
 
     public CustomerGetDTO getById(Integer id) {
-        Optional<Customer> opt_customer = customerRepository.findById(id);
-        if(opt_customer.isPresent()){
-            Customer c = opt_customer.get();
-            return new CustomerGetDTO(
-                    c.getFirst_name(),
-                    c.getLast_name(),
-                    c.getEmail(),
-                    new AddressDTO(c.getAddress().getAddress(),
-                            c.getAddress().getAddress2(),
-                            c.getAddress().getDistrict(),
-                            c.getAddress().getCity().getCity_id(),
-                            c.getAddress().getPostal_code(),
-                            c.getAddress().getPhone()
-                    ));
-        }
-        throw new EntityNotFoundException("customer_id");
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("customer_id"));
+        return new CustomerGetDTO(
+                customer.getFirst_name(),
+                customer.getLast_name(),
+                customer.getEmail(),
+                new AddressDTO(customer.getAddress().getAddress(),
+                        customer.getAddress().getAddress2(),
+                        customer.getAddress().getDistrict(),
+                        customer.getAddress().getCity().getCity_id(),
+                        customer.getAddress().getPostal_code(),
+                        customer.getAddress().getPhone()
+                ));
     }
 
     public ResponseEntity<Customer> create(CustomerCreateDTO dto) {
