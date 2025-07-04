@@ -17,12 +17,12 @@ public class AddressController {
     private AddressService addressService;
 
     @GetMapping("/all")
-    public List<Address> getAddresses(){
+    public List<AddressDTO> getAddresses(){
         return addressService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Address> getAddress(@PathVariable Integer id){
+    public AddressDTO getAddress(@PathVariable Integer id){
         return addressService.getById(id);
     }
 

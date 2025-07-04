@@ -21,12 +21,22 @@ public class AddressService {
     @Autowired
     private CityRepository cityRepository;
 
-    public List<Address> getAll() { return repository.findAll(); }
+    public List<AddressDTO> getAll() {
+        List<Address> addresses = repository.findAll();
+        return addresses.stream().map(a -> new AddressDTO(a.getAddress(),
+                a.getAddress2(), a.getDistrict(),
+                a.getCity().getCity_id(),
+                a.getPostal_code(), a.getPhone())).toList();
+    }
 
-    public ResponseEntity<Address> getById(Integer id) {
-        return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public AddressDTO getById(Integer id) {
+        Address a = repository.findById(id).orElseThrow(()->
+                new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong address_id"));
+
+        return new AddressDTO(a.getAddress(),
+                a.getAddress2(), a.getDistrict(),
+                a.getCity().getCity_id(),
+                a.getPostal_code(), a.getPhone());
     }
 
 
