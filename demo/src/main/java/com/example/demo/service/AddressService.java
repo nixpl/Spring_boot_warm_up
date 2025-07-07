@@ -7,6 +7,7 @@ import com.example.demo.model.City;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CityRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -45,8 +46,13 @@ public class AddressService {
 
     public ResponseEntity<Address> create(AddressDTO dto) {
 
-        if(repository.findByPhone(dto.phone()).isPresent())
-            return ResponseEntity.badRequest().build();
+//        if(repository.findByPhone(dto.phone()).isPresent())
+//            return ResponseEntity.badRequest().build();
+
+        City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("city_id"));
+
+        if (repository.findByAddressAndAddress2AndDistrictAndCityAndPostalCodeAndPhone(dto.address(), dto.address2(), dto.district(), city, dto.postalCode(), dto.phone()).isPresent())
+            throw new DataIntegrityViolationException("Record with such fields already exists");
 
         Address address = new Address();
 
@@ -54,7 +60,7 @@ public class AddressService {
         address.setAddress2(dto.address2());
         address.setDistrict(dto.district());
 
-        City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("city_id"));
+//        City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("city_id"));
         address.setCity(city);
 
         address.setPostalCode(dto.postalCode());
