@@ -78,9 +78,9 @@ public class CustomerService {
     }
 
     public ResponseEntity<CustomerGetDTO> update(Integer id, CustomerUpdateDTO dto) {
-        Optional<Customer> opt_customer = customerRepository.findById(id);
-        if(opt_customer.isPresent()){
-            Customer customer = opt_customer.get();
+        Optional<Customer> optCustomer = customerRepository.findById(id);
+        if(optCustomer.isPresent()){
+            Customer customer = optCustomer.get();
             if(dto.storeId() != null && dto.storeId() >= 0)
                 customer.setStoreId(dto.storeId());
 
@@ -98,7 +98,7 @@ public class CustomerService {
             }
 
             if(dto.addressId() != null) {
-                Address address = addressRepository.findById(dto.addressId()).orElseThrow(() -> new EntityNotFoundException("address_id"));
+                Address address = addressRepository.findById(dto.addressId()).orElseThrow(() -> new EntityNotFoundException("addressId"));
                 customer.setAddress(address);
             }
 

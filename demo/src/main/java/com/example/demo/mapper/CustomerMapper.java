@@ -8,8 +8,8 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
-    @Mapping(target = "address", ignore = true) // przypiszemy ręcznie
-    @Mapping(target = "activebool", constant = "true") // stała wartość
+    @Mapping(target = "address", ignore = true)
+    @Mapping(target = "activebool", constant = "true")
     @Mapping(target = "createDate", expression = "java(new java.util.Date())")
     @Mapping(target = "lastUpdate", expression = "java(new java.util.Date())")
     Customer toEntity(CustomerCreateDTO dto);

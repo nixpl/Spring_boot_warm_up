@@ -42,7 +42,7 @@ public class AddressService {
 
 
     public ResponseEntity<AddressGetDTO> create(AddressCreateDTO dto) {
-        City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("city_id"));
+        City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("cityId"));
         if (repository.findByAddressAndAddress2AndDistrictAndCityAndPostalCodeAndPhone(dto.address(), dto.address2(), dto.district(), city, dto.postalCode(), dto.phone()).isPresent())
             throw new DataIntegrityViolationException("Record with such fields already exists");
 
@@ -66,9 +66,9 @@ public class AddressService {
     }
 
     public ResponseEntity<AddressGetDTO> update(Integer id, AddressUpdateDTO dto) {
-        Optional<Address> opt_address = repository.findById(id);
-        if(opt_address.isPresent()){
-            Address address = opt_address.get();
+        Optional<Address> optAddress = repository.findById(id);
+        if(optAddress.isPresent()){
+            Address address = optAddress.get();
 
             if(!dto.address().isEmpty())
                 address.setAddress(dto.address());

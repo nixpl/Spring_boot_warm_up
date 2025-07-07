@@ -26,12 +26,12 @@ public class CountryService {
     }
 
     public Country getById(Integer  id) {
-        return countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("city_id"));
+        return countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("cityId"));
     }
 
-    public ResponseEntity<Country> create(CountryDTO new_country) {
+    public ResponseEntity<Country> create(CountryDTO newCountry) {
         Country country = new Country();
-        country.setCountry(new_country.country());
+        country.setCountry(newCountry.country());
         country.setLastUpdate(new Date());
         Country saved = countryRepository.save(country);
         return ResponseEntity
@@ -40,7 +40,7 @@ public class CountryService {
     }
 
     public ResponseEntity<Country> update(Integer  id, CountryUpdateDTO dto) {
-        Country country = countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("country_id"));
+        Country country = countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("countryId"));
         country.setCountry(dto.country());
         Country saved = countryRepository.save(country);
         return ResponseEntity.ok().body(saved);
@@ -53,7 +53,7 @@ public class CountryService {
             return ResponseEntity.ok().build();
         }
         else{
-            throw new EntityNotFoundException("country_id");
+            throw new EntityNotFoundException("countryId");
         }
     }
 }

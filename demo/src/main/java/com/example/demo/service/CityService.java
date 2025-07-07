@@ -31,17 +31,17 @@ public class CityService {
     }
 
     public City getById(Integer id) {
-        return cityRepository.findById(id).orElseThrow(() ->  new EntityNotFoundException("city_id"));
+        return cityRepository.findById(id).orElseThrow(() ->  new EntityNotFoundException("cityId"));
     }
 
-    public ResponseEntity<City> create(CityDTO new_city) {
-        if(new_city.countryId() == null || new_city.city() == null || new_city.city().isEmpty()){
+    public ResponseEntity<City> create(CityDTO newCity) {
+        if(newCity.countryId() == null || newCity.city() == null || newCity.city().isEmpty()){
             throw new DataIntegrityViolationException("City name and country cannot be empty");
         }
 
         City city = new City();
-        city.setCity(new_city.city());
-        Country country = countryRepository.findById(new_city.countryId()).orElseThrow(() -> new EntityNotFoundException("country_id"));
+        city.setCity(newCity.city());
+        Country country = countryRepository.findById(newCity.countryId()).orElseThrow(() -> new EntityNotFoundException("countryId"));
         city.setCountry(country);
         city.setLastUpdate(new Date());
 
@@ -53,8 +53,8 @@ public class CityService {
 
     public ResponseEntity<City> update(Integer  id, CityUpdateDTO dto) {
 
-        City city = cityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("city_id"));
-        Country country = countryRepository.findById(dto.countryId()).orElseThrow(() -> new EntityNotFoundException("country_id"));
+        City city = cityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("cityId"));
+        Country country = countryRepository.findById(dto.countryId()).orElseThrow(() -> new EntityNotFoundException("countryId"));
 
         if(dto.city() != null)
             city.setCity(dto.city());
@@ -73,7 +73,7 @@ public class CityService {
             return ResponseEntity.ok().build();
         }
         else{
-            throw new EntityNotFoundException("city_id");
+            throw new EntityNotFoundException("cityId");
         }
     }
 }
