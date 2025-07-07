@@ -29,7 +29,7 @@ public class CountryService {
     public ResponseEntity<Country> create(CountryDTO new_country) {
         Country country = new Country();
         country.setCountry(new_country.country());
-        country.setLast_update(new Date());
+        country.setLastUpdate(new Date());
         countryRepository.save(country);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

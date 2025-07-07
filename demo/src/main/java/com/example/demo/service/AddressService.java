@@ -25,8 +25,8 @@ public class AddressService {
         List<Address> addresses = repository.findAll();
         return addresses.stream().map(a -> new AddressDTO(a.getAddress(),
                 a.getAddress2(), a.getDistrict(),
-                a.getCity().getCity_id(),
-                a.getPostal_code(), a.getPhone())).toList();
+                a.getCity().getCityId(),
+                a.getPostalCode(), a.getPhone())).toList();
     }
 
     public AddressDTO getById(Integer id) {
@@ -35,8 +35,8 @@ public class AddressService {
 
         return new AddressDTO(a.getAddress(),
                 a.getAddress2(), a.getDistrict(),
-                a.getCity().getCity_id(),
-                a.getPostal_code(), a.getPhone());
+                a.getCity().getCityId(),
+                a.getPostalCode(), a.getPhone());
     }
 
 
@@ -51,10 +51,10 @@ public class AddressService {
         address.setAddress2(dto.address2());
         address.setDistrict(dto.district());
 
-        City city = cityRepository.findById(dto.city_id()).orElseThrow(() -> new EntityNotFoundException("city_id"));
+        City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("city_id"));
         address.setCity(city);
 
-        address.setPostal_code(dto.postal_code());
+        address.setPostalCode(dto.postalCode());
         address.setPhone(dto.phone());
 
         repository.save(address);
@@ -88,14 +88,14 @@ public class AddressService {
             if(!dto.district().isEmpty())
                 address.setDistrict(dto.district());
 
-            if(dto.city_id() != null) {
+            if(dto.cityId() != null) {
 
-                City city = cityRepository.findById(dto.city_id()).orElseThrow(() -> new EntityNotFoundException("city_id"));
+                City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("city_id"));
                 address.setCity(city);
 
             }
-            if(!dto.postal_code().isEmpty())
-                address.setPostal_code(dto.postal_code());
+            if(!dto.postalCode().isEmpty())
+                address.setPostalCode(dto.postalCode());
 
             if(!dto.phone().isEmpty())
                 address.setPhone(dto.phone());

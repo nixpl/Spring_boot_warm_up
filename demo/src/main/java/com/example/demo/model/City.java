@@ -18,7 +18,8 @@ import java.util.Date;
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer city_id;
+    @Column(name ="city_id")
+    private Integer cityId;
 
     @NotBlank(message = "City cannot be empty")
     @Column(length = 50)
@@ -28,5 +29,7 @@ public class City {
     @ManyToOne
     @JoinColumn(name = "country_id")
     private Country country;
-    private Date last_update;
+
+    @Column(name ="address_id")
+    private Date lastUpdate;
 }

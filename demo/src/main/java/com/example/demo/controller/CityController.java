@@ -26,12 +26,12 @@ public class CityController {
     }
 
     @PostMapping
-    public ResponseEntity<City> createCity(CityDTO city){
+    public ResponseEntity<City> createCity(@RequestBody CityDTO city){
         return cityService.create(city);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<City> updateCity(@PathVariable Integer  id, CityDTO city){
+    public ResponseEntity<City> updateCity(@PathVariable Integer  id, @RequestBody CityDTO city){
         return cityService.update(id, city);
     }
 

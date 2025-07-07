@@ -17,10 +17,13 @@ import java.util.Date;
 public class Country {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer country_id;
+    @Column(name ="country_id")
+    private Integer countryId;
 
     @NotNull(message = "Country cannot be null")
     @Column(length = 50)
     private String country;
-    private Date last_update;
+
+    @Column(name ="last_update")
+    private Date lastUpdate;
 }

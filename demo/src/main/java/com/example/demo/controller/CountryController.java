@@ -26,12 +26,12 @@ public class CountryController {
     }
 
     @PostMapping
-    public ResponseEntity<Country> createCountry(CountryDTO country){
+    public ResponseEntity<Country> createCountry(@RequestBody CountryDTO country){
         return countryService.create(country);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Country> updateCountry(@PathVariable Integer  id, CountryDTO country){
+    public ResponseEntity<Country> updateCountry(@PathVariable Integer  id, @RequestBody CountryDTO country){
         return countryService.update(id, country);
     }
 

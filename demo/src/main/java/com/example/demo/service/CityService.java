@@ -33,15 +33,15 @@ public class CityService {
     }
 
     public ResponseEntity<City> create(CityDTO new_city) {
-        if(new_city.country_id() == null || new_city.city() == null || new_city.city().isEmpty()){
+        if(new_city.countryId() == null || new_city.city() == null || new_city.city().isEmpty()){
             throw new DataIntegrityViolationException("City name and country cannot be empty");
         }
 
         City city = new City();
         city.setCity(new_city.city());
-        Country country = countryRepository.findById(new_city.country_id()).orElseThrow(() -> new EntityNotFoundException("country_id"));
+        Country country = countryRepository.findById(new_city.countryId()).orElseThrow(() -> new EntityNotFoundException("country_id"));
         city.setCountry(country);
-        city.setLast_update(new Date());
+        city.setLastUpdate(new Date());
 
         cityRepository.save(city);
         return ResponseEntity
@@ -52,9 +52,9 @@ public class CityService {
     public ResponseEntity<City> update(Integer  id, CityDTO dto) {
 
         City city = cityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("city_id"));
-        Country country = countryRepository.findById(dto.country_id()).orElseThrow(() -> new EntityNotFoundException("country_id"));
+        Country country = countryRepository.findById(dto.countryId()).orElseThrow(() -> new EntityNotFoundException("country_id"));
         city.setCountry(country);
-        city.setLast_update(new Date());
+        city.setLastUpdate(new Date());
         cityRepository.save(city);
         return ResponseEntity.ok().build();
     }

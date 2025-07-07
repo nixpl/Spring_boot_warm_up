@@ -17,14 +17,16 @@ import java.util.Date;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer customer_id;
-    private Short store_id;
+    @Column(name = "customer_id")
+    private Integer customerId;
+    @Column( name = "store_id")
+    private Short storeId;
 
     @Column(name = "first_name", length = 45)
-    private String first_name;
+    private String firstName;
 
     @Column(name = "last_name", length = 45)
-    private String last_name;
+    private String lastName;
 
     @Column(length = 45)
     private String email;
@@ -36,9 +38,11 @@ public class Customer {
 
     private Boolean activebool;
 
-    private Date create_date;
+    @Column(name ="create_date")
+    private Date createDate;
 
-    private Date last_update;
+    @Column(name="last_update")
+    private Date lastUpdate;
 
     private Integer active;
 }

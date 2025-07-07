@@ -7,15 +7,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CustomerUpdateDTO( @NotNull(message = "store_id cannot be null")
-                                 Short store_id,
+                                 Short storeId,
 
                                  @NotBlank(message = "first_name cannot be empty")
                                  @Size(max = 45, message = "first_name cannot exceed 45 characters")
-                                 String first_name,
+                                 String firstName,
 
                                  @NotBlank(message = "last_name cannot be empty")
                                  @Size(max = 45, message = "last_name cannot exceed 45 characters")
-                                 String last_name,
+                                 String lastName,
 
                                  @NotBlank(message = "email cannot be empty")
                                  @Size(max = 45, message = "email cannot exceed 45 characters")
@@ -23,7 +23,7 @@ public record CustomerUpdateDTO( @NotNull(message = "store_id cannot be null")
                                  String email,
 
                                  @NotNull(message = "address cannot be null")
-                                 Integer address_id,
+                                 Integer addressId,
 
                                  @NotNull(message = "active cannot be null")
                                  Integer active,

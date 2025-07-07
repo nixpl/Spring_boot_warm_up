@@ -33,14 +33,14 @@ public class CustomerService {
         return customers.stream()
                 .map(c ->
                         new CustomerGetDTO(
-                                c.getFirst_name(),
-                                c.getLast_name(),
+                                c.getFirstName(),
+                                c.getLastName(),
                                 c.getEmail(),
                                 new AddressDTO(c.getAddress().getAddress(),
                                         c.getAddress().getAddress2(),
                                         c.getAddress().getDistrict(),
-                                        c.getAddress().getCity().getCity_id(),
-                                        c.getAddress().getPostal_code(),
+                                        c.getAddress().getCity().getCityId(),
+                                        c.getAddress().getPostalCode(),
                                         c.getAddress().getPhone()
                                         )))
                 .toList();
@@ -49,14 +49,14 @@ public class CustomerService {
     public CustomerGetDTO getById(Integer id) {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("customer_id"));
         return new CustomerGetDTO(
-                customer.getFirst_name(),
-                customer.getLast_name(),
+                customer.getFirstName(),
+                customer.getLastName(),
                 customer.getEmail(),
                 new AddressDTO(customer.getAddress().getAddress(),
                         customer.getAddress().getAddress2(),
                         customer.getAddress().getDistrict(),
-                        customer.getAddress().getCity().getCity_id(),
-                        customer.getAddress().getPostal_code(),
+                        customer.getAddress().getCity().getCityId(),
+                        customer.getAddress().getPostalCode(),
                         customer.getAddress().getPhone()
                 ));
     }
@@ -66,22 +66,22 @@ public class CustomerService {
         if(customerRepository.findByEmail(dto.email()).isPresent())
             throw new DataIntegrityViolationException("Email is already taken");
 
-        if(dto.first_name().isEmpty() || dto.last_name().isEmpty()|| dto.email().isEmpty())
+        if(dto.firstName().isEmpty() || dto.lastName().isEmpty()|| dto.email().isEmpty())
             throw new DataIntegrityViolationException("Name and email cannot be empty");
         Customer customer = new Customer();
 
-        customer.setStore_id(dto.store_id());
-        customer.setFirst_name(dto.first_name());
-        customer.setLast_name(dto.last_name());
+        customer.setStoreId(dto.storeId());
+        customer.setFirstName(dto.firstName());
+        customer.setLastName(dto.lastName());
         customer.setEmail(dto.email());
 
-        Address address = addressRepository.findById(dto.address_id()).orElseThrow(() ->new EntityNotFoundException("address_id"));
+        Address address = addressRepository.findById(dto.addressId()).orElseThrow(() ->new EntityNotFoundException("address_id"));
         customer.setAddress(address);
 
         customer.setActive(dto.active());
         customer.setActivebool(true);
-        customer.setCreate_date(new Date());
-        customer.setLast_update(new Date());
+        customer.setCreateDate(new Date());
+        customer.setLastUpdate(new Date());
 
         customerRepository.save(customer);
 
@@ -105,14 +105,14 @@ public class CustomerService {
         Optional<Customer> opt_customer = customerRepository.findById(id);
         if(opt_customer.isPresent()){
             Customer customer = opt_customer.get();
-            if(dto.store_id() != null && dto.store_id() >= 0)
-                customer.setStore_id(dto.store_id());
+            if(dto.storeId() != null && dto.storeId() >= 0)
+                customer.setStoreId(dto.storeId());
 
-            if(dto.first_name() != null && !dto.first_name().isEmpty())
-                customer.setFirst_name(dto.first_name());
+            if(dto.firstName() != null && !dto.firstName().isEmpty())
+                customer.setFirstName(dto.firstName());
 
-            if(dto.last_name() != null && !dto.last_name().isEmpty())
-                customer.setLast_name(dto.last_name());
+            if(dto.lastName() != null && !dto.lastName().isEmpty())
+                customer.setLastName(dto.lastName());
 
             if(dto.email() != null && !dto.email().isEmpty()) {
                 if (customerRepository.findByEmail(dto.email()).isPresent() && !dto.email().equals(customer.getEmail())) {
@@ -121,8 +121,8 @@ public class CustomerService {
                 customer.setEmail(dto.email());
             }
 
-            if(dto.address_id() != null) {
-                Address address = addressRepository.findById(dto.address_id()).orElseThrow(() -> new EntityNotFoundException("address_id"));
+            if(dto.addressId() != null) {
+                Address address = addressRepository.findById(dto.addressId()).orElseThrow(() -> new EntityNotFoundException("address_id"));
                 customer.setAddress(address);
             }
 
@@ -132,7 +132,7 @@ public class CustomerService {
             if(dto.activebool() != null && dto.activebool() != customer.getActivebool())
                 customer.setActivebool(dto.activebool());
 
-            customer.setLast_update(new Date());
+            customer.setLastUpdate(new Date());
 
             customerRepository.save(customer);
             return ResponseEntity.ok().build();

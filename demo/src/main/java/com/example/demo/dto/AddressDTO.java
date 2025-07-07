@@ -18,11 +18,11 @@ public record AddressDTO(
 
         @NotNull(message = "City cannot be null")
         @Size(min = 0, message = "CityID cannot be smaller than 0")
-        Integer city_id,
+        Integer cityId,
 
         @NotBlank(message = "Postal code cannot be empty")
         @Size(max = 10, message = "Postal code cannot exceed 10 characters")
-        String postal_code,
+        String postalCode,
 
         @NotBlank(message = "Phone number cannot be empty")
         @Size(max = 20, message = "Phone number cannot exceed 20 characters")

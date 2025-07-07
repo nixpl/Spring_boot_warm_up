@@ -16,7 +16,8 @@ import java.util.Date;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer address_id;
+    @Column(name ="address_id")
+    private Integer addressId;
 
     @Column(length = 50, nullable = false)
     private String address;
@@ -31,18 +32,18 @@ public class Address {
     @JoinColumn(name = "city_id")
     private City city;
 
-    @Column(length = 10)
-    private String postal_code;
+    @Column(name = "postal_code", length = 10)
+    private String postalCode;
 
     @Column(length = 20, nullable = false)
     private String phone;
 
-    @Column(nullable = false)
-    private Date last_update;
+    @Column(name ="last_update", nullable = false)
+    private Date lastUpdate;
 
     @PrePersist
     @PreUpdate
     protected void onUpdate() {
-        this.last_update = new Date();
+        this.lastUpdate = new Date();
     }
 }

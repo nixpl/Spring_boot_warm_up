@@ -27,12 +27,12 @@ public class AddressController {
     }
 
     @PostMapping
-    public ResponseEntity<Address> createAddress(AddressDTO address){
+    public ResponseEntity<Address> createAddress(@RequestBody AddressDTO address){
         return addressService.create(address);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Address> updateAddress(@PathVariable Integer id, AddressDTO address){
+    public ResponseEntity<Address> updateAddress(@PathVariable Integer id, @RequestBody AddressDTO address){
         return addressService.update(id, address);
     }
 
