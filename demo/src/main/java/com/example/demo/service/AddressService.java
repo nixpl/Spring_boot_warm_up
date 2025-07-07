@@ -6,6 +6,7 @@ import com.example.demo.dto.AddressUpdateDTO;
 import com.example.demo.mapper.AddressMapper;
 import com.example.demo.model.Address;
 import com.example.demo.model.City;
+import com.example.demo.model.Customer;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CityRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -70,13 +71,13 @@ public class AddressService {
         if(optAddress.isPresent()){
             Address address = optAddress.get();
 
-            if(!dto.address().isEmpty())
+            if(dto.address() != null && !dto.address().isEmpty())
                 address.setAddress(dto.address());
 
-            if(!dto.address2().isEmpty())
+            if(dto.address2() != null && !dto.address2().isEmpty())
                 address.setAddress2(dto.address2());
 
-            if(!dto.district().isEmpty())
+            if(dto.district() != null && !dto.district().isEmpty())
                 address.setDistrict(dto.district());
 
             if(dto.cityId() != null) {
@@ -84,12 +85,13 @@ public class AddressService {
                 address.setCity(city);
 
             }
-            if(!dto.postalCode().isEmpty())
+            if(dto.postalCode() != null && !dto.postalCode().isEmpty())
                 address.setPostalCode(dto.postalCode());
 
-            if(!dto.phone().isEmpty())
+            if(dto.phone() != null && !dto.phone().isEmpty())
                 address.setPhone(dto.phone());
 
+            Address saved = repository.save(address);
             return ResponseEntity.ok().body(addressMapper.toGetDTO(address));
         }
         else{
