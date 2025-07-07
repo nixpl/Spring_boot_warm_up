@@ -1,9 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.AddressDTO;
 import com.example.demo.dto.CustomerCreateDTO;
 import com.example.demo.dto.CustomerGetDTO;
 import com.example.demo.dto.CustomerUpdateDTO;
+import com.example.demo.mapper.CustomerMapper;
 import com.example.demo.model.Address;
 import com.example.demo.model.Customer;
 import com.example.demo.repository.AddressRepository;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.management.BadAttributeValueExpException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -23,72 +22,48 @@ import java.util.Optional;
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
+    private final CustomerMapper mapper;
 
-    public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository) {
+    public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository, CustomerMapper mapper) {
         this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
+        this.mapper = mapper;
     }
 
     public List<CustomerGetDTO> getAll() {
         List<Customer> customers = customerRepository.findAll();
         return customers.stream()
-                .map(c ->
-                        new CustomerGetDTO(
-                                c.getFirstName(),
-                                c.getLastName(),
-                                c.getEmail(),
-                                new AddressDTO(c.getAddress().getAddress(),
-                                        c.getAddress().getAddress2(),
-                                        c.getAddress().getDistrict(),
-                                        c.getAddress().getCity().getCityId(),
-                                        c.getAddress().getPostalCode(),
-                                        c.getAddress().getPhone()
-                                        )))
+                .map(mapper::toGetDTO)
                 .toList();
     }
 
     public CustomerGetDTO getById(Integer id) {
-        Customer customer = customerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("customer_id"));
-        return new CustomerGetDTO(
-                customer.getFirstName(),
-                customer.getLastName(),
-                customer.getEmail(),
-                new AddressDTO(customer.getAddress().getAddress(),
-                        customer.getAddress().getAddress2(),
-                        customer.getAddress().getDistrict(),
-                        customer.getAddress().getCity().getCityId(),
-                        customer.getAddress().getPostalCode(),
-                        customer.getAddress().getPhone()
-                ));
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("customerId"));
+        return mapper.toGetDTO(customer);
     }
 
-    public ResponseEntity<Customer> create(CustomerCreateDTO dto) {
+    public ResponseEntity<CustomerGetDTO> create(CustomerCreateDTO dto) {
 
-        if(customerRepository.findByEmail(dto.email()).isPresent())
+        if (customerRepository.findByEmail(dto.email()).isPresent()) {
             throw new DataIntegrityViolationException("Email is already taken");
+        }
 
-        if(dto.firstName().isEmpty() || dto.lastName().isEmpty()|| dto.email().isEmpty())
+        if (dto.firstName().isEmpty() || dto.lastName().isEmpty() || dto.email().isEmpty()) {
             throw new DataIntegrityViolationException("Name and email cannot be empty");
-        Customer customer = new Customer();
+        }
 
-        customer.setStoreId(dto.storeId());
-        customer.setFirstName(dto.firstName());
-        customer.setLastName(dto.lastName());
-        customer.setEmail(dto.email());
+        Customer customer = mapper.toEntity(dto);
 
-        Address address = addressRepository.findById(dto.addressId()).orElseThrow(() ->new EntityNotFoundException("address_id"));
+        Address address = addressRepository.findById(dto.addressId())
+                .orElseThrow(() -> new EntityNotFoundException("addressId"));
+
         customer.setAddress(address);
 
-        customer.setActive(dto.active());
-        customer.setActivebool(true);
-        customer.setCreateDate(new Date());
-        customer.setLastUpdate(new Date());
-
-        customerRepository.save(customer);
+        Customer saved = customerRepository.save(customer);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .build();
+                .body(mapper.toGetDTO(saved));
     }
 
 
@@ -98,11 +73,11 @@ public class CustomerService {
             customerRepository.delete(customer.get());
             return ResponseEntity.ok().build();      }
         else{
-            throw new EntityNotFoundException("customer_id");
+            throw new EntityNotFoundException("customerId");
         }
     }
 
-    public ResponseEntity<Customer> update(Integer id, CustomerUpdateDTO dto) {
+    public ResponseEntity<CustomerGetDTO> update(Integer id, CustomerUpdateDTO dto) {
         Optional<Customer> opt_customer = customerRepository.findById(id);
         if(opt_customer.isPresent()){
             Customer customer = opt_customer.get();
@@ -135,16 +110,16 @@ public class CustomerService {
                     throw new DataIntegrityViolationException("active must be 0 or 1");
             }
 
-            if(dto.activebool() != null && dto.activebool() != customer.getActivebool())
+            if(dto.activebool() != null)
                 customer.setActivebool(dto.activebool());
 
             customer.setLastUpdate(new Date());
 
-            customerRepository.save(customer);
-            return ResponseEntity.ok().build();
+            Customer saved = customerRepository.save(customer);
+            return ResponseEntity.ok().body(mapper.toGetDTO(saved));
         }
         else{
-            throw new EntityNotFoundException("customer_id");
+            throw new EntityNotFoundException("customerId");
         }
     }
 }

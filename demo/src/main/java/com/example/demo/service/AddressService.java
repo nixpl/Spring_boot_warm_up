@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.AddressDTO;
+import com.example.demo.dto.AddressCreateDTO;
+import com.example.demo.dto.AddressGetDTO;
 import com.example.demo.dto.AddressUpdateDTO;
+import com.example.demo.mapper.AddressMapper;
 import com.example.demo.model.Address;
 import com.example.demo.model.City;
 import com.example.demo.repository.AddressRepository;
@@ -18,53 +20,42 @@ import java.util.Optional;
 public class AddressService {
     private final AddressRepository repository;
     private final CityRepository cityRepository;
+    private final AddressMapper addressMapper;
 
-    public AddressService(AddressRepository repository, CityRepository cityRepository) {
+    public AddressService(AddressRepository repository, CityRepository cityRepository, AddressMapper addressMapper) {
         this.repository = repository;
         this.cityRepository = cityRepository;
+        this.addressMapper = addressMapper;
     }
 
-    public List<AddressDTO> getAll() {
+    public List<AddressGetDTO> getAll() {
         List<Address> addresses = repository.findAll();
-        return addresses.stream().map(a -> new AddressDTO(a.getAddress(),
-                a.getAddress2(), a.getDistrict(),
-                a.getCity().getCityId(),
-                a.getPostalCode(), a.getPhone())).toList();
+        return addresses.stream().map(addressMapper::toGetDTO).toList();
     }
 
-    public AddressDTO getById(Integer id) {
+    public AddressGetDTO getById(Integer id) {
         Address a = repository.findById(id).orElseThrow(()->
-                new EntityNotFoundException("address_id"));
-
-        return new AddressDTO(a.getAddress(),
-                a.getAddress2(), a.getDistrict(),
-                a.getCity().getCityId(),
-                a.getPostalCode(), a.getPhone());
+                new EntityNotFoundException("addressId"));
+        return addressMapper.toGetDTO(a);
     }
 
 
-    public ResponseEntity<Address> create(AddressDTO dto) {
-
+    public ResponseEntity<AddressGetDTO> create(AddressCreateDTO dto) {
         if(repository.findByPhone(dto.phone()).isPresent())
             return ResponseEntity.badRequest().build();
 
-        Address address = new Address();
+        Address address = addressMapper.toEntity(dto);
 
-        address.setAddress(dto.address());
-        address.setAddress2(dto.address2());
-        address.setDistrict(dto.district());
-
-        City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("city_id"));
+        City city = cityRepository.findById(dto.cityId())
+                .orElseThrow(() -> new EntityNotFoundException("cityId"));
         address.setCity(city);
 
-        address.setPostalCode(dto.postalCode());
-        address.setPhone(dto.phone());
+        Address saved = repository.save(address);
 
-        repository.save(address);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .build();
+                .body(addressMapper.toGetDTO(saved));
     }
 
     public ResponseEntity<Address> delete(Integer id) {
@@ -77,7 +68,7 @@ public class AddressService {
         }
     }
 
-    public ResponseEntity<Address> update(Integer id, AddressUpdateDTO dto) {
+    public ResponseEntity<AddressGetDTO> update(Integer id, AddressUpdateDTO dto) {
         Optional<Address> opt_address = repository.findById(id);
         if(opt_address.isPresent()){
             Address address = opt_address.get();
@@ -92,7 +83,7 @@ public class AddressService {
                 address.setDistrict(dto.district());
 
             if(dto.cityId() != null) {
-                City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("city_id"));
+                City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("cityId"));
                 address.setCity(city);
 
             }
@@ -102,10 +93,10 @@ public class AddressService {
             if(!dto.phone().isEmpty())
                 address.setPhone(dto.phone());
 
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body(addressMapper.toGetDTO(address));
         }
         else{
-            throw new EntityNotFoundException("address_id");
+            throw new EntityNotFoundException("addressId");
         }
     }
 

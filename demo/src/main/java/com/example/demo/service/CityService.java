@@ -45,10 +45,10 @@ public class CityService {
         city.setCountry(country);
         city.setLastUpdate(new Date());
 
-        cityRepository.save(city);
+        City saved = cityRepository.save(city);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .build();
+                .body(saved);
     }
 
     public ResponseEntity<City> update(Integer  id, CityUpdateDTO dto) {
@@ -59,12 +59,11 @@ public class CityService {
         if(dto.city() != null)
             city.setCity(dto.city());
 
-        if (dto.countryId() != null)
-            city.setCountry(country);
+        city.setCountry(country);
 
         city.setLastUpdate(new Date());
-        cityRepository.save(city);
-        return ResponseEntity.ok().build();
+        City saved = cityRepository.save(city);
+        return ResponseEntity.ok().body(saved);
     }
 
     public ResponseEntity<City> delete(Integer id) {

@@ -5,7 +5,6 @@ import com.example.demo.dto.CountryUpdateDTO;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CountryRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -34,17 +33,17 @@ public class CountryService {
         Country country = new Country();
         country.setCountry(new_country.country());
         country.setLastUpdate(new Date());
-        countryRepository.save(country);
+        Country saved = countryRepository.save(country);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .build();
+                .body(saved);
     }
 
     public ResponseEntity<Country> update(Integer  id, CountryUpdateDTO dto) {
         Country country = countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("country_id"));
         country.setCountry(dto.country());
-        countryRepository.save(country);
-        return ResponseEntity.ok().build();
+        Country saved = countryRepository.save(country);
+        return ResponseEntity.ok().body(saved);
     }
 
     public ResponseEntity<Country> delete(Integer  id) {

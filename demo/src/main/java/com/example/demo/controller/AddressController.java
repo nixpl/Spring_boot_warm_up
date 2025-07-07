@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AddressDTO;
+import com.example.demo.dto.AddressCreateDTO;
+import com.example.demo.dto.AddressGetDTO;
 import com.example.demo.dto.AddressUpdateDTO;
 import com.example.demo.model.Address;
 import com.example.demo.service.AddressService;
@@ -20,22 +21,22 @@ public class AddressController {
     }
 
     @GetMapping("/all")
-    public List<AddressDTO> getAddresses(){
+    public List<AddressGetDTO> getAddresses(){
         return addressService.getAll();
     }
 
     @GetMapping("/{id}")
-    public AddressDTO getAddress(@PathVariable Integer id){
+    public AddressGetDTO getAddress(@PathVariable Integer id){
         return addressService.getById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Address> createAddress(@Valid @RequestBody AddressDTO address){
+    public ResponseEntity<AddressGetDTO> createAddress(@Valid @RequestBody AddressCreateDTO address){
         return addressService.create(address);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Address> updateAddress(@PathVariable Integer id, @Valid @RequestBody AddressUpdateDTO address){
+    public ResponseEntity<AddressGetDTO> updateAddress(@PathVariable Integer id, @Valid @RequestBody AddressUpdateDTO address){
         return addressService.update(id, address);
     }
 
