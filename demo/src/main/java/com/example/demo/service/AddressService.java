@@ -6,7 +6,6 @@ import com.example.demo.model.City;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CityRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,10 +15,13 @@ import java.util.Optional;
 
 @Service
 public class AddressService {
-    @Autowired
-    private AddressRepository repository;
-    @Autowired
-    private CityRepository cityRepository;
+    private final AddressRepository repository;
+    private final CityRepository cityRepository;
+
+    public AddressService(AddressRepository repository, CityRepository cityRepository) {
+        this.repository = repository;
+        this.cityRepository = cityRepository;
+    }
 
     public List<AddressDTO> getAll() {
         List<Address> addresses = repository.findAll();

@@ -4,7 +4,6 @@ import com.example.demo.dto.CountryDTO;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CountryRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,8 +14,11 @@ import java.util.Optional;
 
 @Service
 public class CountryService {
-    @Autowired
-    private CountryRepository countryRepository;
+    private final CountryRepository countryRepository;
+
+    public CountryService(CountryRepository countryRepository) {
+        this.countryRepository = countryRepository;
+    }
 
     public List<Country> getAll() {
         return countryRepository.findAll();

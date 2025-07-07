@@ -4,7 +4,6 @@ import com.example.demo.dto.AddressDTO;
 import com.example.demo.model.Address;
 import com.example.demo.service.AddressService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +12,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/address")
 public class AddressController {
+    private final AddressService addressService;
 
-    @Autowired
-    private AddressService addressService;
+    public AddressController(AddressService addressService) {
+        this.addressService = addressService;
+    }
 
     @GetMapping("/all")
     public List<AddressDTO> getAddresses(){

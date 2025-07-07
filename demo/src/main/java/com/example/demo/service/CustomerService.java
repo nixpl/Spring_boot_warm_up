@@ -9,7 +9,6 @@ import com.example.demo.model.Customer;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +20,13 @@ import java.util.Optional;
 
 @Service
 public class CustomerService {
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
+    private final AddressRepository addressRepository;
 
-    @Autowired
-    private AddressRepository addressRepository;
-
+    public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository) {
+        this.customerRepository = customerRepository;
+        this.addressRepository = addressRepository;
+    }
 
     public List<CustomerGetDTO> getAll() {
         List<Customer> customers = customerRepository.findAll();

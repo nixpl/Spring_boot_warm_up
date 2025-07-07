@@ -6,7 +6,6 @@ import com.example.demo.dto.CustomerUpdateDTO;
 import com.example.demo.model.Customer;
 import com.example.demo.service.CustomerService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +14,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
-    @Autowired
-    private CustomerService customerService;
+    private final CustomerService customerService;
+
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
 
     @GetMapping("/all")
     public List<CustomerGetDTO> getCustomers(){

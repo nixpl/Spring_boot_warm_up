@@ -6,7 +6,6 @@ import com.example.demo.model.Country;
 import com.example.demo.repository.CityRepository;
 import com.example.demo.repository.CountryRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +17,13 @@ import java.util.Optional;
 
 @Service
 public class CityService {
-    @Autowired
-    private CityRepository cityRepository;
+    private final CityRepository cityRepository;
+    private final CountryRepository countryRepository;
 
-    @Autowired
-    private CountryRepository countryRepository;
+    public CityService(CityRepository cityRepository, CountryRepository countryRepository) {
+        this.cityRepository = cityRepository;
+        this.countryRepository = countryRepository;
+    }
 
     public List<City> getAll() {
         return cityRepository.findAll();
