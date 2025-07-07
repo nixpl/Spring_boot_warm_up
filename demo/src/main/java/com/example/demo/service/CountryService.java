@@ -5,6 +5,8 @@ import com.example.demo.dto.CountryUpdateDTO;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CountryRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,8 +23,8 @@ public class CountryService {
         this.countryRepository = countryRepository;
     }
 
-    public List<Country> getAll() {
-        return countryRepository.findAll();
+    public Page<Country> getAll(Pageable pageable) {
+        return countryRepository.findAll(pageable);
     }
 
     public Country getById(Integer  id) {

@@ -8,6 +8,8 @@ import com.example.demo.repository.CityRepository;
 import com.example.demo.repository.CountryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,8 +28,8 @@ public class CityService {
         this.countryRepository = countryRepository;
     }
 
-    public List<City> getAll() {
-        return cityRepository.findAll();
+    public Page<City> getAll(Pageable pageable) {
+        return cityRepository.findAll(pageable);
     }
 
     public City getById(Integer id) {

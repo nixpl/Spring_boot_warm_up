@@ -10,6 +10,8 @@ import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,11 +32,9 @@ public class CustomerService {
         this.mapper = mapper;
     }
 
-    public List<CustomerGetDTO> getAll() {
-        List<Customer> customers = customerRepository.findAll();
-        return customers.stream()
-                .map(mapper::toGetDTO)
-                .toList();
+    public Page<CustomerGetDTO> getAll(Pageable pageable) {
+        Page<Customer> customerPage = customerRepository.findAll(pageable);
+        return customerPage.map(mapper::toGetDTO);
     }
 
     public CustomerGetDTO getById(Integer id) {

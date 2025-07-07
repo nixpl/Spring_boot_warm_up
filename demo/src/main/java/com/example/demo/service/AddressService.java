@@ -11,6 +11,8 @@ import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CityRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,9 +32,9 @@ public class AddressService {
         this.addressMapper = addressMapper;
     }
 
-    public List<AddressGetDTO> getAll() {
-        List<Address> addresses = repository.findAll();
-        return addresses.stream().map(addressMapper::toGetDTO).toList();
+    public Page<AddressGetDTO> getAll(Pageable pageable) {
+        Page<Address> addressPage = repository.findAll(pageable);
+        return addressPage.map(addressMapper::toGetDTO);
     }
 
     public AddressGetDTO getById(Integer id) {

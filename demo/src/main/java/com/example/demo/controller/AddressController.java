@@ -6,6 +6,8 @@ import com.example.demo.dto.AddressUpdateDTO;
 import com.example.demo.model.Address;
 import com.example.demo.service.AddressService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +23,8 @@ public class AddressController {
     }
 
     @GetMapping("/all")
-    public List<AddressGetDTO> getAddresses(){
-        return addressService.getAll();
+    public Page<AddressGetDTO> getAddresses(Pageable pageable){
+        return addressService.getAll(pageable);
     }
 
     @GetMapping("/{id}")

@@ -5,6 +5,8 @@ import com.example.demo.dto.CountryUpdateDTO;
 import com.example.demo.model.Country;
 import com.example.demo.service.CountryService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +22,8 @@ public class CountryController {
     }
 
     @GetMapping("/all")
-    public List<Country> getCountries(){
-        return countryService.getAll();
+    public Page<Country> getCountries(Pageable pageable){
+        return countryService.getAll(pageable);
     }
 
     @GetMapping("/{id}")
