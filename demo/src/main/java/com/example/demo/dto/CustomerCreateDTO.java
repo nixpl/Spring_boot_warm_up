@@ -1,13 +1,11 @@
 package com.example.demo.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public record CustomerCreateDTO(
 
         @NotNull(message = "store_id cannot be null")
+        @Min(value = 0, message = "store_id cannot be negative")
         Short storeId,
 
         @NotBlank(message = "first_name cannot be empty")
@@ -20,12 +18,15 @@ public record CustomerCreateDTO(
 
         @NotBlank(message = "email cannot be empty")
         @Size(max = 45, message = "email cannot exceed 45 characters")
-        @Email
+        @Email(message = "Enter correct email")
         String email,
 
         @NotNull(message = "address cannot be null")
+        @Min(value = 0, message = "address_id cannot be negative")
         Integer addressId,
 
         @NotNull(message = "active cannot be null")
+        @Min(value = 0, message = "active must be one of {0, 1}")
+        @Max(value = 1, message = "active must be one of {0, 1}")
         Integer active) {
 }

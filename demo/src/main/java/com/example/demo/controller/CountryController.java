@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.CountryDTO;
 import com.example.demo.model.Country;
 import com.example.demo.service.CountryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +27,12 @@ public class CountryController {
     }
 
     @PostMapping
-    public ResponseEntity<Country> createCountry(@RequestBody CountryDTO country){
+    public ResponseEntity<Country> createCountry(@Valid @RequestBody CountryDTO country){
         return countryService.create(country);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Country> updateCountry(@PathVariable Integer  id, @RequestBody CountryDTO country){
+    public ResponseEntity<Country> updateCountry(@PathVariable Integer  id, @Valid @RequestBody CountryDTO country){
         return countryService.update(id, country);
     }
 
