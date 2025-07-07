@@ -9,6 +9,7 @@ import com.example.demo.model.City;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CityRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,17 +42,13 @@ public class AddressService {
 
 
     public ResponseEntity<AddressGetDTO> create(AddressCreateDTO dto) {
-        if(repository.findByPhone(dto.phone()).isPresent())
-            return ResponseEntity.badRequest().build();
+        City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("city_id"));
+        if (repository.findByAddressAndAddress2AndDistrictAndCityAndPostalCodeAndPhone(dto.address(), dto.address2(), dto.district(), city, dto.postalCode(), dto.phone()).isPresent())
+            throw new DataIntegrityViolationException("Record with such fields already exists");
 
         Address address = addressMapper.toEntity(dto);
-
-        City city = cityRepository.findById(dto.cityId())
-                .orElseThrow(() -> new EntityNotFoundException("cityId"));
         address.setCity(city);
-
         Address saved = repository.save(address);
-
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
