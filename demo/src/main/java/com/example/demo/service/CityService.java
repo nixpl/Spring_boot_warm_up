@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.CityDTO;
+import com.example.demo.dto.CityUpdateDTO;
 import com.example.demo.model.City;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CityRepository;
@@ -50,11 +51,17 @@ public class CityService {
                 .build();
     }
 
-    public ResponseEntity<City> update(Integer  id, CityDTO dto) {
+    public ResponseEntity<City> update(Integer  id, CityUpdateDTO dto) {
 
         City city = cityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("city_id"));
         Country country = countryRepository.findById(dto.countryId()).orElseThrow(() -> new EntityNotFoundException("country_id"));
-        city.setCountry(country);
+
+        if(dto.city() != null)
+            city.setCity(dto.city());
+
+        if (dto.countryId() != null)
+            city.setCountry(country);
+
         city.setLastUpdate(new Date());
         cityRepository.save(city);
         return ResponseEntity.ok().build();

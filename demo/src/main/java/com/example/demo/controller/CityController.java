@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CityDTO;
+import com.example.demo.dto.CityUpdateDTO;
 import com.example.demo.model.City;
 import com.example.demo.service.CityService;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ public class CityController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<City> updateCity(@PathVariable Integer  id, @Valid @RequestBody CityDTO city){
+    public ResponseEntity<City> updateCity(@PathVariable Integer  id, @Valid @RequestBody CityUpdateDTO city){
         return cityService.update(id, city);
     }
 

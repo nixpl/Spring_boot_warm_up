@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.management.BadAttributeValueExpException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -126,8 +127,10 @@ public class CustomerService {
                 customer.setAddress(address);
             }
 
-            if(dto.active() != null)
+            if(dto.active() != null && (dto.active() == 0 || dto.active() == 1))
                 customer.setActive(dto.active());
+            else
+                throw new DataIntegrityViolationException("active must be 0 or 1");
 
             if(dto.activebool() != null && dto.activebool() != customer.getActivebool())
                 customer.setActivebool(dto.activebool());

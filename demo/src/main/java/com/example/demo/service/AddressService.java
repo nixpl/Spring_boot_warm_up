@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.AddressDTO;
+import com.example.demo.dto.AddressUpdateDTO;
 import com.example.demo.model.Address;
 import com.example.demo.model.City;
 import com.example.demo.repository.AddressRepository;
@@ -76,7 +77,7 @@ public class AddressService {
         }
     }
 
-    public ResponseEntity<Address> update(Integer id, AddressDTO dto) {
+    public ResponseEntity<Address> update(Integer id, AddressUpdateDTO dto) {
         Optional<Address> opt_address = repository.findById(id);
         if(opt_address.isPresent()){
             Address address = opt_address.get();
@@ -91,7 +92,6 @@ public class AddressService {
                 address.setDistrict(dto.district());
 
             if(dto.cityId() != null) {
-
                 City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("city_id"));
                 address.setCity(city);
 

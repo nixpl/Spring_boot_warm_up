@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.CountryDTO;
+import com.example.demo.dto.CountryUpdateDTO;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CountryRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -38,7 +40,7 @@ public class CountryService {
                 .build();
     }
 
-    public ResponseEntity<Country> update(Integer  id, CountryDTO dto) {
+    public ResponseEntity<Country> update(Integer  id, CountryUpdateDTO dto) {
         Country country = countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("country_id"));
         country.setCountry(dto.country());
         countryRepository.save(country);

@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.AddressDTO;
+import com.example.demo.dto.AddressUpdateDTO;
 import com.example.demo.model.Address;
 import com.example.demo.service.AddressService;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ public class AddressController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Address> updateAddress(@PathVariable Integer id, @Valid @RequestBody AddressDTO address){
+    public ResponseEntity<Address> updateAddress(@PathVariable Integer id, @Valid @RequestBody AddressUpdateDTO address){
         return addressService.update(id, address);
     }
 
