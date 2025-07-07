@@ -45,10 +45,6 @@ public class AddressService {
 
 
     public ResponseEntity<Address> create(AddressDTO dto) {
-
-//        if(repository.findByPhone(dto.phone()).isPresent())
-//            return ResponseEntity.badRequest().build();
-
         City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("city_id"));
 
         if (repository.findByAddressAndAddress2AndDistrictAndCityAndPostalCodeAndPhone(dto.address(), dto.address2(), dto.district(), city, dto.postalCode(), dto.phone()).isPresent())
