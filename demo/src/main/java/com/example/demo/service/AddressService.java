@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.Specification.AddressSpecifications;
 import com.example.demo.dto.AddressCreateDTO;
 import com.example.demo.dto.AddressGetDTO;
 import com.example.demo.dto.AddressUpdateDTO;
@@ -12,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,36 +35,38 @@ public class AddressService {
         this.addressMapper = addressMapper;
     }
 
-public Page<AddressGetDTO> getAll(Map<String, String> filter, Pageable pageable) {
-    if  (filter.isEmpty())
-        return addressRepository.findAll(pageable).map(addressMapper::toGetDTO);
+    public Page<AddressGetDTO> getAll(Map<String, String> params, Pageable pageable) {
+        Map<String, String> filterParams = new java.util.HashMap<>(params);
 
-    if (filter.size() > 1)
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are allowed to filter only by one parameter");
+        Specification<Address> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
 
-    String key = filter.keySet().iterator().next();
-    String value = filter.values().iterator().next();
-
-    var method = getStringPageFunction(pageable, key);
-
-    return method.apply(value).map(addressMapper::toGetDTO);
-}
-
-    private Function<String, Page<Address>> getStringPageFunction(Pageable pageable, String key) {
-        Map<String, Function<String, Page<Address>>> filterMethods = Map.of(
-                "address", v -> addressRepository.findByAddress(v, pageable),
-                "address2", v -> addressRepository.findByAddress2(v, pageable),
-                "district", v -> addressRepository.findByDistrict(v, pageable),
-                "city", v -> addressRepository.findByCity_City(v, pageable),
-                "country", v -> addressRepository.findByCity_Country_Country(v, pageable)
-        );
-
-        var method = filterMethods.get(key);
-
-        if (method == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown filter parameter: " + key);
+        String searchTerm = filterParams.remove("search");
+        if (searchTerm != null && !searchTerm.isBlank()) {
+            spec = spec.and(AddressSpecifications.hasSearchTerm(searchTerm));
         }
-        return method;
+
+        if (filterParams.size() > 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "You are allowed to use the 'search' parameter with at most one other filter.");
+        }
+
+        if (!filterParams.isEmpty()) {
+            Map.Entry<String, String> entry = filterParams.entrySet().iterator().next();
+            spec = spec.and(createFilterSpecification(entry.getKey(), entry.getValue()));
+        }
+
+        return addressRepository.findAll(spec, pageable).map(addressMapper::toGetDTO);
+    }
+
+    private Specification<Address> createFilterSpecification(String key, String value) {
+        return switch (key) {
+            case "address" -> (root, query, cb) -> cb.equal(root.get("address"), value);
+            case "address2" -> (root, query, cb) -> cb.equal(root.get("address2"), value);
+            case "district" -> (root, query, cb) -> cb.equal(root.get("district"), value);
+            case "city" -> (root, query, cb) -> cb.equal(root.get("city").get("city"), value);
+            case "country" -> (root, query, cb) -> cb.equal(root.get("city").get("country").get("country"), value);
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown filter parameter: " + key);
+        };
     }
 
     public AddressGetDTO getById(Integer id) {

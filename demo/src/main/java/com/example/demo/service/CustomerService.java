@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.Specification.CustomerSpecifications;
 import com.example.demo.dto.CustomerCreateDTO;
 import com.example.demo.dto.CustomerGetDTO;
 import com.example.demo.dto.CustomerUpdateDTO;
@@ -12,17 +13,15 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 @Service
 public class CustomerService {
@@ -37,44 +36,41 @@ public class CustomerService {
     }
 
     public Page<CustomerGetDTO> getAll(Map<String, String> params, Pageable pageable) {
-        Map<String, String> filter = new java.util.HashMap<>(params);
+        Map<String, String> filterParams = new java.util.HashMap<>(params);
 
-        String searchTerm = filter.remove("search");
+        Specification<Customer> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
 
+        String searchTerm = filterParams.remove("search");
+        if (searchTerm != null && !searchTerm.isBlank()) {
+            spec = spec.and(CustomerSpecifications.hasSearchTerm(searchTerm));
+        }
 
+        if (filterParams.size() > 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "You are allowed to use the 'search' parameter with at most one other filter.");
+        }
 
-        if  (filter.isEmpty())
-            return customerRepository.findAll(pageable).map(mapper::toGetDTO);
+        if (!filterParams.isEmpty()) {
+            Map.Entry<String, String> entry = filterParams.entrySet().iterator().next();
+            spec = spec.and(createFilterSpecification(entry.getKey(), entry.getValue()));
+        }
 
-        if (filter.size() > 1)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are allowed to filter only by one parameter");
-
-        String key = filter.keySet().iterator().next();
-        String value = filter.values().iterator().next();
-
-        var method = getStringPageFunction(pageable, key);
-
-        return method.apply(value).map(mapper::toGetDTO);
+        return customerRepository.findAll(spec, pageable).map(mapper::toGetDTO);
     }
 
-    private Function<String, Page<Customer>> getStringPageFunction(Pageable pageable, String key) {
-        Map<String, Function<String, Page<Customer>>> filterMethods = Map.of(
-                "firstName", v -> customerRepository.findByFirstName(v, pageable),
-                "lastName", v -> customerRepository.findByLastName(v, pageable),
-                "email", v -> customerRepository.findByEmail(v, pageable),
-                "active", v -> customerRepository.findByActive(Integer.parseInt(v), pageable),
-                "address", v -> customerRepository.findByAddress_Address(v, pageable),
-                "district", v -> customerRepository.findByAddress_District(v, pageable),
-                "city", v -> customerRepository.findByAddress_City_City(v, pageable),
-                "country", v -> customerRepository.findByAddress_City_Country_Country(v, pageable)
-        );
-
-        var method = filterMethods.get(key);
-
-        if (method == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown filter parameter: " + key);
-        }
-        return method;
+    private Specification<Customer> createFilterSpecification(String key, String value) {
+        return switch (key) {
+            case "firstName" -> (root, query, cb) -> cb.equal(root.get("firstName"), value);
+            case "lastName" -> (root, query, cb) -> cb.equal(root.get("lastName"), value);
+            case "email" -> (root, query, cb) -> cb.equal(root.get("email"), value);
+            case "active" -> (root, query, cb) -> cb.equal(root.get("active"), Integer.parseInt(value));
+            case "address" -> (root, query, cb) -> cb.equal(root.get("address").get("address"), value);
+            case "address2" -> (root, query, cb) -> cb.equal(root.get("address").get("address2"), value);
+            case "district" -> (root, query, cb) -> cb.equal(root.get("address").get("district"), value);
+            case "city" -> (root, query, cb) -> cb.equal(root.get("address").get("city").get("city"), value);
+            case "country" -> (root, query, cb) -> cb.equal(root.get("address").get("city").get("country").get("country"), value);
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown filter parameter: " + key);
+        };
     }
 
     public CustomerGetDTO getById(Integer id) {

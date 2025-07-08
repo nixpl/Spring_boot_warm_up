@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.Specification.CountrySpecifications;
 import com.example.demo.dto.CityGetDTO;
 import com.example.demo.dto.CountryCreateDTO;
 import com.example.demo.dto.CountryGetDTO;
@@ -11,6 +12,7 @@ import com.example.demo.repository.CountryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,32 +33,34 @@ public class CountryService {
         this.countryMapper = countryMapper;
     }
 
-    public Page<CountryGetDTO> getAll(Map<String, String> filter, Pageable pageable) {
-        if  (filter.isEmpty())
-            return countryRepository.findAll(pageable).map(countryMapper::toGetDTO);
+    public Page<CountryGetDTO> getAll(Map<String, String> params, Pageable pageable) {
+        Map<String, String> filterParams = new java.util.HashMap<>(params);
 
-        if (filter.size() > 1)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are allowed to filter only by one parameter");
+        Specification<Country> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
 
-        String key = filter.keySet().iterator().next();
-        String value = filter.values().iterator().next();
+        String searchTerm = filterParams.remove("search");
+        if (searchTerm != null && !searchTerm.isBlank()) {
+            spec = spec.and(CountrySpecifications.hasSearchTerm(searchTerm));
+        }
 
-        var method = getStringPageFunction(pageable, key);
+        if (filterParams.size() > 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "You are allowed to use the 'search' parameter with at most one other filter.");
+        }
 
-        return method.apply(value).map(countryMapper::toGetDTO);
+        if (!filterParams.isEmpty()) {
+            Map.Entry<String, String> entry = filterParams.entrySet().iterator().next();
+            spec = spec.and(createFilterSpecification(entry.getKey(), entry.getValue()));
+        }
+
+        return countryRepository.findAll(spec, pageable).map(countryMapper::toGetDTO);
     }
 
-    private Function<String, Page<Country>> getStringPageFunction(Pageable pageable, String key) {
-        Map<String, Function<String, Page<Country>>> filterMethods = Map.of(
-                "country", v -> countryRepository.findByCountry(v, pageable)
-        );
-
-        var method = filterMethods.get(key);
-
-        if (method == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown filter parameter: " + key);
-        }
-        return method;
+    private Specification<Country> createFilterSpecification(String key, String value) {
+        return switch (key) {
+            case "country" -> (root, query, cb) -> cb.equal(root.get("country"), value);
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown filter parameter: " + key);
+        };
     }
 
     public Country getById(Integer  id) {
