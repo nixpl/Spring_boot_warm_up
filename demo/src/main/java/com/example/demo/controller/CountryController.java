@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CountryCreateDTO;
+import com.example.demo.dto.CountryGetDTO;
 import com.example.demo.dto.CountryUpdateDTO;
 import com.example.demo.model.Country;
 import com.example.demo.service.CountryService;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/country")
@@ -21,8 +24,8 @@ public class CountryController {
     }
 
     @GetMapping("/all")
-    public Page<Country> getCountries(@PageableDefault(page = 0, size = 10, sort = "countryId") Pageable pageable){
-        return countryService.getAll(pageable);
+    public Page<CountryGetDTO> getCountries(@RequestParam(required = false) Map<String, String> filter, @PageableDefault(page = 0, size = 10, sort = "countryId") Pageable pageable){
+        return countryService.getAll(filter, pageable);
     }
 
     @GetMapping("/{id}")

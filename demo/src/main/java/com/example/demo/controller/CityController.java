@@ -12,6 +12,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/city")
 public class CityController {
@@ -22,8 +24,8 @@ public class CityController {
     }
 
     @GetMapping("/all")
-    public Page<CityGetDTO> getCites(@PageableDefault(page = 0, size = 10, sort = "cityId") Pageable pageable){
-        return cityService.getAll(pageable);
+    public Page<CityGetDTO> getCites(@RequestParam(required = false) Map<String, String> filter, @PageableDefault(page = 0, size = 10, sort = "cityId") Pageable pageable){
+        return cityService.getAll(filter, pageable);
     }
 
     @GetMapping("/{id}")

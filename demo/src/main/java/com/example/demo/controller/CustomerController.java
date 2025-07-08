@@ -24,11 +24,6 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-//    @GetMapping("/all")
-//    public Page<CustomerGetDTO> getCustomers(@RequestParam(required = false) String filter, @PageableDefault(page = 0, size = 10, sort = "customerId") Pageable pageable){
-//        return customerService.getAll(filter, pageable);
-//    }
-
     @GetMapping("/all")
     public Page<CustomerGetDTO> getCustomers(
             @RequestParam(required = false)Map<String, String> filter,

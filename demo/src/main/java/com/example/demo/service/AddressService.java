@@ -6,7 +6,6 @@ import com.example.demo.dto.AddressUpdateDTO;
 import com.example.demo.mapper.AddressMapper;
 import com.example.demo.model.Address;
 import com.example.demo.model.City;
-import com.example.demo.model.Customer;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CityRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,29 +15,58 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 public class AddressService {
-    private final AddressRepository repository;
+    private final AddressRepository addressRepository;
     private final CityRepository cityRepository;
     private final AddressMapper addressMapper;
 
-    public AddressService(AddressRepository repository, CityRepository cityRepository, AddressMapper addressMapper) {
-        this.repository = repository;
+    public AddressService(AddressRepository addressRepository, CityRepository cityRepository, AddressMapper addressMapper) {
+        this.addressRepository = addressRepository;
         this.cityRepository = cityRepository;
         this.addressMapper = addressMapper;
     }
 
-    public Page<AddressGetDTO> getAll(Pageable pageable) {
-        Page<Address> addressPage = repository.findAll(pageable);
-        return addressPage.map(addressMapper::toGetDTO);
+public Page<AddressGetDTO> getAll(Map<String, String> filter, Pageable pageable) {
+    if  (filter.isEmpty())
+        return addressRepository.findAll(pageable).map(addressMapper::toGetDTO);
+
+    if (filter.size() > 1)
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are allowed to filter only by one parameter");
+
+    String key = filter.keySet().iterator().next();
+    String value = filter.values().iterator().next();
+
+    var method = getStringPageFunction(pageable, key);
+
+    return method.apply(value).map(addressMapper::toGetDTO);
+}
+
+    private Function<String, Page<Address>> getStringPageFunction(Pageable pageable, String key) {
+        Map<String, Function<String, Page<Address>>> filterMethods = Map.of(
+                "address", v -> addressRepository.findByAddress(v, pageable),
+                "address2", v -> addressRepository.findByAddress2(v, pageable),
+                "district", v -> addressRepository.findByDistrict(v, pageable),
+                "city", v -> addressRepository.findByCity_City(v, pageable),
+                "country", v -> addressRepository.findByCity_Country_Country(v, pageable)
+        );
+
+        var method = filterMethods.get(key);
+
+        if (method == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown filter parameter: " + key);
+        }
+        return method;
     }
 
     public AddressGetDTO getById(Integer id) {
-        Address a = repository.findById(id).orElseThrow(()->
+        Address a = addressRepository.findById(id).orElseThrow(()->
                 new EntityNotFoundException("addressId"));
         return addressMapper.toGetDTO(a);
     }
@@ -46,12 +74,12 @@ public class AddressService {
 
     public ResponseEntity<AddressGetDTO> create(AddressCreateDTO dto) {
         City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("cityId"));
-        if (repository.findByAddressAndAddress2AndDistrictAndCityAndPostalCodeAndPhone(dto.address(), dto.address2(), dto.district(), city, dto.postalCode(), dto.phone()).isPresent())
+        if (addressRepository.findByAddressAndAddress2AndDistrictAndCityAndPostalCodeAndPhone(dto.address(), dto.address2(), dto.district(), city, dto.postalCode(), dto.phone()).isPresent())
             throw new DataIntegrityViolationException("Record with such fields already exists");
 
         Address address = addressMapper.toEntity(dto);
         address.setCity(city);
-        Address saved = repository.save(address);
+        Address saved = addressRepository.save(address);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -59,9 +87,9 @@ public class AddressService {
     }
 
     public ResponseEntity<Address> delete(Integer id) {
-        Optional<Address> address = repository.findById(id);
+        Optional<Address> address = addressRepository.findById(id);
         if(address.isPresent()){
-            repository.delete(address.get());
+            addressRepository.delete(address.get());
             return ResponseEntity.ok().build();      }
         else{
             return ResponseEntity.notFound().build();
@@ -69,7 +97,7 @@ public class AddressService {
     }
 
     public ResponseEntity<AddressGetDTO> update(Integer id, AddressUpdateDTO dto) {
-        Optional<Address> optAddress = repository.findById(id);
+        Optional<Address> optAddress = addressRepository.findById(id);
         if(optAddress.isPresent()){
             Address address = optAddress.get();
 
@@ -93,7 +121,7 @@ public class AddressService {
             if(dto.phone() != null && !dto.phone().isEmpty())
                 address.setPhone(dto.phone());
 
-            Address saved = repository.save(address);
+            Address saved = addressRepository.save(address);
             return ResponseEntity.ok().body(addressMapper.toGetDTO(address));
         }
         else{

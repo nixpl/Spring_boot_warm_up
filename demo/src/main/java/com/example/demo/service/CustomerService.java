@@ -36,7 +36,13 @@ public class CustomerService {
         this.mapper = mapper;
     }
 
-    public Page<CustomerGetDTO> getAll(Map<String, String> filter, Pageable pageable) {
+    public Page<CustomerGetDTO> getAll(Map<String, String> params, Pageable pageable) {
+        Map<String, String> filter = new java.util.HashMap<>(params);
+
+        String searchTerm = filter.remove("search");
+
+
+
         if  (filter.isEmpty())
             return customerRepository.findAll(pageable).map(mapper::toGetDTO);
 
@@ -58,8 +64,9 @@ public class CustomerService {
                 "email", v -> customerRepository.findByEmail(v, pageable),
                 "active", v -> customerRepository.findByActive(Integer.parseInt(v), pageable),
                 "address", v -> customerRepository.findByAddress_Address(v, pageable),
+                "district", v -> customerRepository.findByAddress_District(v, pageable),
                 "city", v -> customerRepository.findByAddress_City_City(v, pageable),
-                "country", v -> customerRepository.findByAddress_City_Country(v, pageable)
+                "country", v -> customerRepository.findByAddress_City_Country_Country(v, pageable)
         );
 
         var method = filterMethods.get(key);

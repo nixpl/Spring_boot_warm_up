@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/address")
@@ -24,8 +25,9 @@ public class AddressController {
     }
 
     @GetMapping("/all")
-    public Page<AddressGetDTO> getAddresses(@PageableDefault(page = 0, size = 10, sort = "addressId") Pageable pageable){
-        return addressService.getAll(pageable);
+    public Page<AddressGetDTO> getAddresses(@RequestParam(required = false) Map<String, String> filter,
+                                            @PageableDefault(page = 0, size = 10, sort = "addressId") Pageable pageable){
+        return addressService.getAll(filter, pageable);
     }
 
     @GetMapping("/{id}")

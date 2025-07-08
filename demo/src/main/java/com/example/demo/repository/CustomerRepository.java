@@ -21,15 +21,15 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     Page<Customer> findByAddress_Address(String address, Pageable pageable);
 
+    Page<Customer> findByAddress_District(String district, Pageable pageable);
+
     Page<Customer> findByAddress_City_City(String city, Pageable pageable);
 
-    Page<Customer> findByAddress_City_Country(String country, Pageable pageable);
+    Page<Customer> findByAddress_City_Country_Country(String country, Pageable pageable);
 
 
 
 
 
     Optional<Customer> findByEmail(String email);
-
-
 }

@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.dto.CityCreateDTO;
 import com.example.demo.dto.CityGetDTO;
 import com.example.demo.dto.CityUpdateDTO;
-import com.example.demo.mapper.AddressMapper;
 import com.example.demo.mapper.CityMapper;
 import com.example.demo.model.City;
 import com.example.demo.model.Country;
@@ -16,9 +15,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 public class CityService {
@@ -32,9 +34,35 @@ public class CityService {
         this.cityMapper = cityMapper;
     }
 
-    public Page<CityGetDTO> getAll(Pageable pageable) {
-        return cityRepository.findAll(pageable).map(cityMapper::toGetDTO);
+    public Page<CityGetDTO> getAll(Map<String, String> filter, Pageable pageable) {
+        if  (filter.isEmpty())
+            return cityRepository.findAll(pageable).map(cityMapper::toGetDTO);
+
+        if (filter.size() > 1)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are allowed to filter only by one parameter");
+
+        String key = filter.keySet().iterator().next();
+        String value = filter.values().iterator().next();
+
+        var method = getStringPageFunction(pageable, key);
+
+        return method.apply(value).map(cityMapper::toGetDTO);
     }
+
+    private Function<String, Page<City>> getStringPageFunction(Pageable pageable, String key) {
+        Map<String, Function<String, Page<City>>> filterMethods = Map.of(
+                "city", v -> cityRepository.findByCity(v, pageable),
+                "country", v -> cityRepository.findByCountry_Country(v, pageable)
+        );
+
+        var method = filterMethods.get(key);
+
+        if (method == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown filter parameter: " + key);
+        }
+        return method;
+    }
+
 
     public City getById(Integer id) {
         return cityRepository.findById(id).orElseThrow(() ->  new EntityNotFoundException("cityId"));
