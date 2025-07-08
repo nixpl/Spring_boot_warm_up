@@ -8,10 +8,12 @@ import com.example.demo.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/customer")
@@ -22,9 +24,16 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
+//    @GetMapping("/all")
+//    public Page<CustomerGetDTO> getCustomers(@RequestParam(required = false) String filter, @PageableDefault(page = 0, size = 10, sort = "customerId") Pageable pageable){
+//        return customerService.getAll(filter, pageable);
+//    }
+
     @GetMapping("/all")
-    public Page<CustomerGetDTO> getCustomers(Pageable pageable){
-        return customerService.getAll(pageable);
+    public Page<CustomerGetDTO> getCustomers(
+            @RequestParam(required = false)Map<String, String> filter,
+            @PageableDefault(page = 0, size = 10, sort = "customerId") Pageable pageable){
+        return customerService.getAll(filter, pageable);
     }
 
     @GetMapping("/{id}")

@@ -15,10 +15,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Service
 public class CustomerService {
@@ -32,9 +36,38 @@ public class CustomerService {
         this.mapper = mapper;
     }
 
-    public Page<CustomerGetDTO> getAll(Pageable pageable) {
-        Page<Customer> customerPage = customerRepository.findAll(pageable);
-        return customerPage.map(mapper::toGetDTO);
+    public Page<CustomerGetDTO> getAll(Map<String, String> filter, Pageable pageable) {
+        if  (filter.isEmpty())
+            return customerRepository.findAll(pageable).map(mapper::toGetDTO);
+
+        if (filter.size() > 1)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are allowed to filter only by one parameter");
+
+        String key = filter.keySet().iterator().next();
+        String value = filter.values().iterator().next();
+
+        var method = getStringPageFunction(pageable, key);
+
+        return method.apply(value).map(mapper::toGetDTO);
+    }
+
+    private Function<String, Page<Customer>> getStringPageFunction(Pageable pageable, String key) {
+        Map<String, Function<String, Page<Customer>>> filterMethods = Map.of(
+                "firstName", v -> customerRepository.findByFirstName(v, pageable),
+                "lastName", v -> customerRepository.findByLastName(v, pageable),
+                "email", v -> customerRepository.findByEmail(v, pageable),
+                "active", v -> customerRepository.findByActive(Integer.parseInt(v), pageable),
+                "address", v -> customerRepository.findByAddress_Address(v, pageable),
+                "city", v -> customerRepository.findByAddress_City_City(v, pageable),
+                "country", v -> customerRepository.findByAddress_City_Country(v, pageable)
+        );
+
+        var method = filterMethods.get(key);
+
+        if (method == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown filter parameter: " + key);
+        }
+        return method;
     }
 
     public CustomerGetDTO getById(Integer id) {

@@ -1,7 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.CityDTO;
+import com.example.demo.dto.CityCreateDTO;
+import com.example.demo.dto.CityGetDTO;
 import com.example.demo.dto.CityUpdateDTO;
+import com.example.demo.mapper.AddressMapper;
+import com.example.demo.mapper.CityMapper;
 import com.example.demo.model.City;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CityRepository;
@@ -15,28 +18,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CityService {
     private final CityRepository cityRepository;
     private final CountryRepository countryRepository;
+    private final CityMapper cityMapper;
 
-    public CityService(CityRepository cityRepository, CountryRepository countryRepository) {
+    public CityService(CityRepository cityRepository, CountryRepository countryRepository, CityMapper cityMapper) {
         this.cityRepository = cityRepository;
         this.countryRepository = countryRepository;
+        this.cityMapper = cityMapper;
     }
 
-    public Page<City> getAll(Pageable pageable) {
-        return cityRepository.findAll(pageable);
+    public Page<CityGetDTO> getAll(Pageable pageable) {
+        return cityRepository.findAll(pageable).map(cityMapper::toGetDTO);
     }
 
     public City getById(Integer id) {
         return cityRepository.findById(id).orElseThrow(() ->  new EntityNotFoundException("cityId"));
     }
 
-    public ResponseEntity<City> create(CityDTO newCity) {
+    public ResponseEntity<City> create(CityCreateDTO newCity) {
         if(newCity.countryId() == null || newCity.city() == null || newCity.city().isEmpty()){
             throw new DataIntegrityViolationException("City name and country cannot be empty");
         }

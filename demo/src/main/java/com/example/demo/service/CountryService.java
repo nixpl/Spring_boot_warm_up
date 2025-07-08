@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.CountryDTO;
+import com.example.demo.dto.CountryCreateDTO;
 import com.example.demo.dto.CountryUpdateDTO;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CountryRepository;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,7 +30,7 @@ public class CountryService {
         return countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("cityId"));
     }
 
-    public ResponseEntity<Country> create(CountryDTO newCountry) {
+    public ResponseEntity<Country> create(CountryCreateDTO newCountry) {
         Country country = new Country();
         country.setCountry(newCountry.country());
         country.setLastUpdate(new Date());
