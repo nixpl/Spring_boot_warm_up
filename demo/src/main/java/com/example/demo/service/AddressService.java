@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.Specification.AddressSpecifications;
+import com.example.demo.specification.AddressSpecifications;
 import com.example.demo.dto.AddressCreateDTO;
 import com.example.demo.dto.AddressGetDTO;
 import com.example.demo.dto.AddressUpdateDTO;
@@ -21,7 +21,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Service
 public class AddressService {

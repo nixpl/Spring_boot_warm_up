@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.Specification.CustomerSpecifications;
+import com.example.demo.specification.CustomerSpecifications;
 import com.example.demo.dto.CustomerCreateDTO;
 import com.example.demo.dto.CustomerGetDTO;
 import com.example.demo.dto.CustomerUpdateDTO;

@@ -1,12 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.Specification.CountrySpecifications;
-import com.example.demo.dto.CityGetDTO;
+import com.example.demo.specification.CountrySpecifications;
 import com.example.demo.dto.CountryCreateDTO;
 import com.example.demo.dto.CountryGetDTO;
 import com.example.demo.dto.CountryUpdateDTO;
 import com.example.demo.mapper.CountryMapper;
-import com.example.demo.model.City;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CountryRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Service
 public class CountryService {

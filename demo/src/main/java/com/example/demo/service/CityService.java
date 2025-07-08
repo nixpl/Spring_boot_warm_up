@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.Specification.CitySpecifications;
+import com.example.demo.specification.CitySpecifications;
 import com.example.demo.dto.CityCreateDTO;
 import com.example.demo.dto.CityGetDTO;
 import com.example.demo.dto.CityUpdateDTO;
@@ -22,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Service
 public class CityService {
