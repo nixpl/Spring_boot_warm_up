@@ -25,9 +25,9 @@ public class AddressController {
     }
 
     @GetMapping("/all")
-    public Page<AddressGetDTO> getAddresses(@RequestParam(required = false) Map<String, String> filter,
+    public Page<AddressGetDTO> getAddresses(@RequestParam(required = false) Map<String, String> params,
                                             @PageableDefault(page = 0, size = 10, sort = "addressId") Pageable pageable){
-        return addressService.getAll(filter, pageable);
+        return addressService.getAll(params, pageable);
     }
 
     @GetMapping("/{id}")

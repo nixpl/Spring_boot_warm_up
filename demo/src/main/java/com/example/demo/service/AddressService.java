@@ -39,6 +39,9 @@ public class AddressService {
 
         Specification<Address> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
 
+        filterParams.remove("page");
+        filterParams.remove("size");
+        filterParams.remove("sort");
         String searchTerm = filterParams.remove("search");
         if (searchTerm != null && !searchTerm.isBlank()) {
             spec = spec.and(AddressSpecifications.hasSearchTerm(searchTerm));

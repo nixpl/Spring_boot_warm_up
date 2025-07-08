@@ -24,8 +24,8 @@ public class CountryController {
     }
 
     @GetMapping("/all")
-    public Page<CountryGetDTO> getCountries(@RequestParam(required = false) Map<String, String> filter, @PageableDefault(page = 0, size = 10, sort = "countryId") Pageable pageable){
-        return countryService.getAll(filter, pageable);
+    public Page<CountryGetDTO> getCountries(@RequestParam(required = false) Map<String, String> params, @PageableDefault(page = 0, size = 10, sort = "countryId") Pageable pageable){
+        return countryService.getAll(params, pageable);
     }
 
     @GetMapping("/{id}")
