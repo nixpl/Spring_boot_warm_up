@@ -10,6 +10,7 @@ import com.example.demo.mapper.CountryMapper;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CountryRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class CountryService {
     private final CountryRepository countryRepository;
@@ -33,6 +35,7 @@ public class CountryService {
     }
 
     public Page<CountryGetDTO> getAll(Map<String, String> params, Pageable pageable) {
+        log.info("Attempting to retrieve all countries with parameters: {} and pageable: {}", params, pageable);
         Map<String, String> filterParams = new java.util.HashMap<>(params);
 
         Specification<Country> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
@@ -42,6 +45,7 @@ public class CountryService {
         filterParams.remove("sort");
         String searchTerm = filterParams.remove("search");
         if (searchTerm != null && !searchTerm.isBlank()) {
+            log.info("Applying search term specification: {}", searchTerm);
             spec = spec.and(CountrySpecifications.hasSearchTerm(searchTerm));
         }
 
@@ -51,10 +55,13 @@ public class CountryService {
 
         if (!filterParams.isEmpty()) {
             Map.Entry<String, String> entry = filterParams.entrySet().iterator().next();
+            log.info("Applying filter specification with key: '{}' and value: '{}'", entry.getKey(), entry.getValue());
             spec = spec.and(createFilterSpecification(entry.getKey(), entry.getValue()));
         }
 
-        return countryRepository.findAll(spec, pageable).map(countryMapper::toGetDTO);
+        Page<CountryGetDTO> result = countryRepository.findAll(spec, pageable).map(countryMapper::toGetDTO);
+        log.info("Successfully retrieved {} countries on page {}", result.getNumberOfElements(), pageable.getPageNumber());
+        return result;
     }
 
     private Specification<Country> createFilterSpecification(String key, String value) {
@@ -65,30 +72,39 @@ public class CountryService {
     }
 
     public Country getById(Integer  id) {
-        return countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("cityId"));
+        log.info("Attempting to retrieve country with ID: {}", id);
+        Country country = countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("countryId"));
+        log.info("Successfully retrieved country with ID: {}", id);
+        return country;
     }
 
     public ResponseEntity<Country> create(CountryCreateDTO newCountry) {
+        log.info("Attempting to create a new country with DTO: {}", newCountry);
         Country country = new Country();
         country.setCountry(newCountry.country());
         country.setLastUpdate(new Date());
         Country saved = countryRepository.save(country);
+        log.info("Successfully created and saved country with ID: {}", saved.getCountryId());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(saved);
     }
 
     public ResponseEntity<Country> update(Integer  id, CountryUpdateDTO dto) {
+        log.info("Attempting to update country with ID: {} using DTO: {}", id, dto);
         Country country = countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("countryId"));
         country.setCountry(dto.country());
         Country saved = countryRepository.save(country);
+        log.info("Successfully updated country with ID: {}", saved.getCountryId());
         return ResponseEntity.ok().body(saved);
     }
 
     public ResponseEntity<Country> delete(Integer  id) {
+        log.info("Attempting to delete country with ID: {}", id);
         Optional<Country> country = countryRepository.findById(id);
         if(country.isPresent()){
             countryRepository.delete(country.get());
+            log.info("Successfully deleted country with ID: {}", id);
             return ResponseEntity.ok().build();
         }
         else{

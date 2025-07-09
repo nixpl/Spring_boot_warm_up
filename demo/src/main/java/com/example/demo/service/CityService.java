@@ -12,6 +12,7 @@ import com.example.demo.model.Country;
 import com.example.demo.repository.CityRepository;
 import com.example.demo.repository.CountryRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class CityService {
     private final CityRepository cityRepository;
@@ -38,6 +40,7 @@ public class CityService {
     }
 
     public Page<CityGetDTO> getAll(Map<String, String> params, Pageable pageable) {
+        log.info("Attempting to retrieve all cities with parameters: {} and pageable: {}", params, pageable);
         Map<String, String> filterParams = new java.util.HashMap<>(params);
 
         Specification<City> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
@@ -47,6 +50,7 @@ public class CityService {
         filterParams.remove("sort");
         String searchTerm = filterParams.remove("search");
         if (searchTerm != null && !searchTerm.isBlank()) {
+            log.info("Applying search term specification: {}", searchTerm);
             spec = spec.and(CitySpecifications.hasSearchTerm(searchTerm));
         }
 
@@ -56,10 +60,13 @@ public class CityService {
 
         if (!filterParams.isEmpty()) {
             Map.Entry<String, String> entry = filterParams.entrySet().iterator().next();
+            log.info("Applying filter specification with key: '{}' and value: '{}'", entry.getKey(), entry.getValue());
             spec = spec.and(createFilterSpecification(entry.getKey(), entry.getValue()));
         }
 
-        return cityRepository.findAll(spec, pageable).map(cityMapper::toGetDTO);
+        Page<CityGetDTO> result = cityRepository.findAll(spec, pageable).map(cityMapper::toGetDTO);
+        log.info("Successfully retrieved {} cities on page {}", result.getNumberOfElements(), pageable.getPageNumber());
+        return result;
     }
 
     private Specification<City> createFilterSpecification(String key, String value) {
@@ -72,10 +79,14 @@ public class CityService {
 
 
     public City getById(Integer id) {
-        return cityRepository.findById(id).orElseThrow(() ->  new EntityNotFoundException("cityId"));
+        log.info("Attempting to retrieve city with ID: {}", id);
+        City city = cityRepository.findById(id).orElseThrow(() ->  new EntityNotFoundException("cityId"));
+        log.info("Successfully retrieved city with ID: {}", id);
+        return city;
     }
 
     public ResponseEntity<City> create(CityCreateDTO newCity) {
+        log.info("Attempting to create a new city with DTO: {}", newCity);
         if(newCity.countryId() == null || newCity.city() == null || newCity.city().isEmpty()){
             throw new DataIntegrityViolationException("City name and country cannot be empty");
         }
@@ -87,13 +98,14 @@ public class CityService {
         city.setLastUpdate(new Date());
 
         City saved = cityRepository.save(city);
+        log.info("Successfully created and saved city with ID: {}", saved.getCityId());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(saved);
     }
 
     public ResponseEntity<City> update(Integer  id, CityUpdateDTO dto) {
-
+        log.info("Attempting to update city with ID: {} using DTO: {}", id, dto);
         City city = cityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("cityId"));
         Country country = countryRepository.findById(dto.countryId()).orElseThrow(() -> new EntityNotFoundException("countryId"));
 
@@ -104,13 +116,16 @@ public class CityService {
 
         city.setLastUpdate(new Date());
         City saved = cityRepository.save(city);
+        log.info("Successfully updated city with ID: {}", saved.getCityId());
         return ResponseEntity.ok().body(saved);
     }
 
     public ResponseEntity<City> delete(Integer id) {
+        log.info("Attempting to delete city with ID: {}", id);
         Optional<City> city = cityRepository.findById(id);
         if(city.isPresent()){
             cityRepository.delete(city.get());
+            log.info("Successfully deleted city with ID: {}", id);
             return ResponseEntity.ok().build();
         }
         else{

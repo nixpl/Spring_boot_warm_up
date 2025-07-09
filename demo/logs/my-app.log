@@ -1004,3 +1004,167 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
 	at java.base/java.lang.Thread.run(Thread.java:1447)
 2025-07-09 15:10:05.255 [http-nio-8080-exec-4] INFO  c.e.d.controller.CustomerController - Received request to create a new customer: CustomerDTO[storeId=1, firstName='Marcin', lastName='Doe', email='m@example.com', addressId=123, active=1]
+2025-07-09 15:40:12.430 [HikariPool-1:housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=15m18s74ms530µs800ns).
+2025-07-09 15:47:45.699 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-07-09 15:47:45.708 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-07-09 15:47:45.711 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-09 15:47:45.713 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-07-09 15:47:45.715 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-07-09 15:47:51.385 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 24.0.1 with PID 30584 (C:\Users\michal\Desktop\DVDRENTAL\Spring_boot_warm_up\demo\target\classes started by michal in C:\Users\michal\Desktop\DVDRENTAL\Spring_boot_warm_up\demo)
+2025-07-09 15:47:51.388 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2025-07-09 15:47:52.296 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-09 15:47:52.393 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 87 ms. Found 4 JPA repository interfaces.
+2025-07-09 15:47:52.999 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-07-09 15:47:53.016 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-07-09 15:47:53.017 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-07-09 15:47:53.092 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-07-09 15:47:53.093 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1641 ms
+2025-07-09 15:47:53.302 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-09 15:47:53.377 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-07-09 15:47:53.419 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-07-09 15:47:53.820 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-09 15:47:53.856 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-07-09 15:47:54.120 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1682e6a
+2025-07-09 15:47:54.122 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-07-09 15:47:54.187 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-09 15:47:54.992 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-09 15:47:55.415 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-09 15:47:55.873 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-09 15:47:56.366 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-07-09 15:47:56.376 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 5.503 seconds (process running for 6.205)
+2025-07-09 15:49:24.589 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-09 15:49:24.589 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-09 15:49:24.590 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-07-09 15:49:24.633 [http-nio-8080-exec-2] INFO  c.e.d.controller.CustomerController - Received request to get all customers with filter: {country=Egypt, seacrch=asa} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:49:24.633 [http-nio-8080-exec-2] INFO  c.e.demo.service.CustomerService - Attempting to retrieve all customers with parameters: {country=Egypt, seacrch=asa} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:49:24.636 [http-nio-8080-exec-2] WARN  c.e.d.e.GlobalExceptionHandler - Too many filters: Choose only one filter from: [seacrch, country]
+2025-07-09 15:49:36.696 [http-nio-8080-exec-4] INFO  c.e.d.controller.CustomerController - Received request to get all customers with filter: {country=Egypt, search=asa} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:49:36.696 [http-nio-8080-exec-4] INFO  c.e.demo.service.CustomerService - Attempting to retrieve all customers with parameters: {country=Egypt, search=asa} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:49:36.697 [http-nio-8080-exec-4] INFO  c.e.demo.service.CustomerService - Applying search term specification: asa
+2025-07-09 15:49:36.701 [http-nio-8080-exec-4] INFO  c.e.demo.service.CustomerService - Applying filter specification with key: 'country' and value: 'Egypt'
+2025-07-09 15:49:36.858 [http-nio-8080-exec-4] INFO  c.e.demo.service.CustomerService - Successfully retrieved 0 customers on page 0
+2025-07-09 15:49:41.447 [http-nio-8080-exec-5] INFO  c.e.d.controller.CustomerController - Received request to get all customers with filter: {country=Egypt, search=a} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:49:41.447 [http-nio-8080-exec-5] INFO  c.e.demo.service.CustomerService - Attempting to retrieve all customers with parameters: {country=Egypt, search=a} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:49:41.447 [http-nio-8080-exec-5] INFO  c.e.demo.service.CustomerService - Applying search term specification: a
+2025-07-09 15:49:41.447 [http-nio-8080-exec-5] INFO  c.e.demo.service.CustomerService - Applying filter specification with key: 'country' and value: 'Egypt'
+2025-07-09 15:49:41.486 [http-nio-8080-exec-5] INFO  c.e.demo.service.CustomerService - Successfully retrieved 10 customers on page 0
+2025-07-09 15:49:57.875 [http-nio-8080-exec-6] INFO  c.e.d.controller.CustomerController - Received request to get all customers with filter: {country=Egypt, search=a} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:49:57.876 [http-nio-8080-exec-6] INFO  c.e.demo.service.CustomerService - Attempting to retrieve all customers with parameters: {country=Egypt, search=a} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:49:57.876 [http-nio-8080-exec-6] INFO  c.e.demo.service.CustomerService - Applying search term specification: a
+2025-07-09 15:49:57.876 [http-nio-8080-exec-6] INFO  c.e.demo.service.CustomerService - Applying filter specification with key: 'country' and value: 'Egypt'
+2025-07-09 15:49:57.895 [http-nio-8080-exec-6] INFO  c.e.demo.service.CustomerService - Successfully retrieved 10 customers on page 0
+2025-07-09 15:55:33.841 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-07-09 15:55:33.849 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-07-09 15:55:33.852 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-09 15:55:33.854 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-07-09 15:55:33.857 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-07-09 15:55:38.360 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 24.0.1 with PID 29768 (C:\Users\michal\Desktop\DVDRENTAL\Spring_boot_warm_up\demo\target\classes started by michal in C:\Users\michal\Desktop\DVDRENTAL\Spring_boot_warm_up\demo)
+2025-07-09 15:55:38.363 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2025-07-09 15:55:39.150 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-09 15:55:39.268 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 105 ms. Found 4 JPA repository interfaces.
+2025-07-09 15:55:39.878 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-07-09 15:55:39.894 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-07-09 15:55:39.894 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-07-09 15:55:39.976 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-07-09 15:55:39.976 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1551 ms
+2025-07-09 15:55:40.170 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-09 15:55:40.235 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-07-09 15:55:40.274 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-07-09 15:55:40.611 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-09 15:55:40.636 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-07-09 15:55:40.899 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2c8a445b
+2025-07-09 15:55:40.901 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-07-09 15:55:40.960 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-09 15:55:41.761 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-09 15:55:42.050 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-09 15:55:42.514 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-09 15:55:42.975 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-07-09 15:55:42.985 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 5.146 seconds (process running for 5.604)
+2025-07-09 15:56:05.149 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-09 15:56:05.149 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-09 15:56:05.150 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-07-09 15:56:05.190 [http-nio-8080-exec-2] INFO  c.e.d.controller.CustomerController - Received request to get all customers with filter: {country=Egypt, search=a} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:56:05.190 [http-nio-8080-exec-2] INFO  c.e.demo.service.CustomerService - Attempting to retrieve all customers with parameters: {country=Egypt, search=a} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:56:05.191 [http-nio-8080-exec-2] INFO  c.e.demo.service.CustomerService - Applying search term specification: a
+2025-07-09 15:56:05.195 [http-nio-8080-exec-2] INFO  c.e.demo.service.CustomerService - Applying filter specification with key: 'country' and value: 'Egypt'
+2025-07-09 15:56:05.354 [http-nio-8080-exec-2] INFO  c.e.demo.service.CustomerService - Successfully retrieved 10 customers on page 0
+2025-07-09 15:57:06.272 [http-nio-8080-exec-5] INFO  c.e.d.controller.CustomerController - Received request to get all customers with filter: {country=Egypt, search=a?sort=firstName} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:57:06.273 [http-nio-8080-exec-5] INFO  c.e.demo.service.CustomerService - Attempting to retrieve all customers with parameters: {country=Egypt, search=a?sort=firstName} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:57:06.273 [http-nio-8080-exec-5] INFO  c.e.demo.service.CustomerService - Applying search term specification: a?sort=firstName
+2025-07-09 15:57:06.273 [http-nio-8080-exec-5] INFO  c.e.demo.service.CustomerService - Applying filter specification with key: 'country' and value: 'Egypt'
+2025-07-09 15:57:06.278 [http-nio-8080-exec-5] INFO  c.e.demo.service.CustomerService - Successfully retrieved 0 customers on page 0
+2025-07-09 15:57:17.135 [http-nio-8080-exec-6] INFO  c.e.d.controller.CustomerController - Received request to get all customers with filter: {country=Egypt, search=a} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:57:17.135 [http-nio-8080-exec-6] INFO  c.e.demo.service.CustomerService - Attempting to retrieve all customers with parameters: {country=Egypt, search=a} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-09 15:57:17.135 [http-nio-8080-exec-6] INFO  c.e.demo.service.CustomerService - Applying search term specification: a
+2025-07-09 15:57:17.135 [http-nio-8080-exec-6] INFO  c.e.demo.service.CustomerService - Applying filter specification with key: 'country' and value: 'Egypt'
+2025-07-09 15:57:17.155 [http-nio-8080-exec-6] INFO  c.e.demo.service.CustomerService - Successfully retrieved 10 customers on page 0
+2025-07-09 15:57:40.359 [http-nio-8080-exec-7] INFO  c.e.d.controller.CustomerController - Received request to get all customers with filter: {country=Egypt, search=a, sort=firstName} and pageable: Page request [number: 0, size 10, sort: firstName: ASC]
+2025-07-09 15:57:40.359 [http-nio-8080-exec-7] INFO  c.e.demo.service.CustomerService - Attempting to retrieve all customers with parameters: {country=Egypt, search=a, sort=firstName} and pageable: Page request [number: 0, size 10, sort: firstName: ASC]
+2025-07-09 15:57:40.359 [http-nio-8080-exec-7] INFO  c.e.demo.service.CustomerService - Applying search term specification: a
+2025-07-09 15:57:40.359 [http-nio-8080-exec-7] INFO  c.e.demo.service.CustomerService - Applying filter specification with key: 'country' and value: 'Egypt'
+2025-07-09 15:57:40.378 [http-nio-8080-exec-7] INFO  c.e.demo.service.CustomerService - Successfully retrieved 10 customers on page 0
+2025-07-09 15:59:39.309 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-07-09 15:59:39.317 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-07-09 15:59:39.320 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-09 15:59:39.322 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-07-09 15:59:39.324 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-07-09 16:00:36.747 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 24.0.1 with PID 30492 (C:\Users\michal\Desktop\DVDRENTAL\Spring_boot_warm_up\demo\target\classes started by michal in C:\Users\michal\Desktop\DVDRENTAL\Spring_boot_warm_up\demo)
+2025-07-09 16:00:36.750 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2025-07-09 16:00:37.599 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-09 16:00:37.717 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 108 ms. Found 4 JPA repository interfaces.
+2025-07-09 16:00:38.347 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-07-09 16:00:38.363 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-07-09 16:00:38.363 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-07-09 16:00:38.441 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-07-09 16:00:38.441 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1632 ms
+2025-07-09 16:00:38.656 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-09 16:00:38.714 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-07-09 16:00:38.756 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-07-09 16:00:39.086 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-09 16:00:39.113 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-07-09 16:00:39.366 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2c8a445b
+2025-07-09 16:00:39.368 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-07-09 16:00:39.427 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-09 16:00:40.361 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-09 16:00:40.643 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-09 16:00:41.152 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-09 16:00:41.559 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-07-09 16:00:41.567 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 5.339 seconds (process running for 5.799)
+2025-07-09 16:00:51.915 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-09 16:00:51.916 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-09 16:00:51.916 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2025-07-09 16:00:51.952 [http-nio-8080-exec-1] INFO  c.e.d.s.r.AbstractSortArgumentResolver - Resolving Pageable argument.
+2025-07-09 16:00:51.960 [http-nio-8080-exec-1] INFO  c.e.d.s.r.AbstractSortArgumentResolver - Initial Pageable resolved by parent: Page request [number: 0, size 10, sort: firstName: ASC]
+2025-07-09 16:00:51.960 [http-nio-8080-exec-1] INFO  c.e.d.s.r.AbstractSortArgumentResolver - No sort alias found for property 'firstName', using as is.
+2025-07-09 16:00:51.960 [http-nio-8080-exec-1] INFO  c.e.d.s.r.AbstractSortArgumentResolver - Returning final Pageable object: Page request [number: 0, size 10, sort: firstName: ASC]
+2025-07-09 16:00:51.960 [http-nio-8080-exec-1] INFO  c.e.d.controller.CustomerController - Received request to get all customers with filter: {country=Egypt, search=a, sort=firstName} and pageable: Page request [number: 0, size 10, sort: firstName: ASC]
+2025-07-09 16:00:51.960 [http-nio-8080-exec-1] INFO  c.e.demo.service.CustomerService - Attempting to retrieve all customers with parameters: {country=Egypt, search=a, sort=firstName} and pageable: Page request [number: 0, size 10, sort: firstName: ASC]
+2025-07-09 16:00:51.961 [http-nio-8080-exec-1] INFO  c.e.demo.service.CustomerService - Applying search term specification: a
+2025-07-09 16:00:51.965 [http-nio-8080-exec-1] INFO  c.e.demo.service.CustomerService - Applying filter specification with key: 'country' and value: 'Egypt'
+2025-07-09 16:00:52.144 [http-nio-8080-exec-1] INFO  c.e.demo.service.CustomerService - Successfully retrieved 10 customers on page 0
+2025-07-09 16:03:49.720 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-07-09 16:03:49.727 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-07-09 16:03:49.731 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-09 16:03:49.733 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-07-09 16:03:49.736 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

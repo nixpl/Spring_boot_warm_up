@@ -33,10 +33,10 @@ public class CustomerController {
 
     @GetMapping("/all")
     public Page<CustomerGetDTO> getCustomers(
-            @RequestParam(required = false)Map<String, String> filter,
+            @RequestParam(required = false)Map<String, String> params,
             @ForCustomer @PageableDefault(page = 0, size = 10, sort = "customerId") Pageable pageable){
-        log.info("Received request to get all customers with filter: {} and pageable: {}", filter, pageable);
-        return customerService.getAll(filter, pageable);
+        log.info("Received request to get all customers with params: {} and pageable: {}", params, pageable);
+        return customerService.getAll(params, pageable);
     }
 
     @GetMapping("/{id}")

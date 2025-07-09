@@ -1,5 +1,6 @@
 package com.example.demo.sort.resolver;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public abstract class AbstractSortArgumentResolver extends PageableHandlerMethodArgumentResolver {
 
     private final Map<String, String> sortAliasMap;
@@ -37,21 +39,30 @@ public abstract class AbstractSortArgumentResolver extends PageableHandlerMethod
             @NonNull NativeWebRequest webRequest,
             @NonNull WebDataBinderFactory binderFactory
     ) {
-        Pageable pageable = (Pageable) super.resolveArgument(methodParameter, mavContainer, webRequest, binderFactory);
+        log.info("Resolving Pageable argument.");
+        Pageable initialPageable = (Pageable) super.resolveArgument(methodParameter, mavContainer, webRequest, binderFactory);
+        log.info("Initial Pageable resolved by parent: {}", initialPageable);
 
         List<Sort.Order> mappedOrders = new ArrayList<>();
-        for (Sort.Order order : pageable.getSort()) {
+        for (Sort.Order order : initialPageable.getSort()) {
             String property = order.getProperty();
             if (sortAliasMap.containsKey(property)) {
-                mappedOrders.add(new Sort.Order(order.getDirection(), sortAliasMap.get(property)));
+                String mappedProperty = sortAliasMap.get(property);
+                log.info("Mapping sort alias '{}' to '{}'", property, mappedProperty);
+                mappedOrders.add(new Sort.Order(order.getDirection(), mappedProperty));
             } else {
+                log.info("No sort alias found for property '{}', using as is.", property);
                 mappedOrders.add(order);
             }
         }
-        return PageRequest.of(
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
+
+        Pageable finalPageable = PageRequest.of(
+                initialPageable.getPageNumber(),
+                initialPageable.getPageSize(),
                 Sort.by(mappedOrders)
         );
+
+        log.info("Returning final Pageable object: {}", finalPageable);
+        return finalPageable;
     }
 }

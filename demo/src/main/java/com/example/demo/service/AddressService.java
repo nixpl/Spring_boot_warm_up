@@ -12,6 +12,7 @@ import com.example.demo.model.City;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CityRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class AddressService {
     private final AddressRepository addressRepository;
@@ -37,6 +39,7 @@ public class AddressService {
     }
 
     public Page<AddressGetDTO> getAll(Map<String, String> params, Pageable pageable) {
+        log.info("Attempting to retrieve all addresses with parameters: {} and pageable: {}", params, pageable);
         Map<String, String> filterParams = new java.util.HashMap<>(params);
 
         Specification<Address> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
@@ -46,6 +49,7 @@ public class AddressService {
         filterParams.remove("sort");
         String searchTerm = filterParams.remove("search");
         if (searchTerm != null && !searchTerm.isBlank()) {
+            log.info("Applying search term specification: {}", searchTerm);
             spec = spec.and(AddressSpecifications.hasSearchTerm(searchTerm));
         }
 
@@ -55,10 +59,13 @@ public class AddressService {
 
         if (!filterParams.isEmpty()) {
             Map.Entry<String, String> entry = filterParams.entrySet().iterator().next();
+            log.info("Applying filter specification with key: '{}' and value: '{}'", entry.getKey(), entry.getValue());
             spec = spec.and(createFilterSpecification(entry.getKey(), entry.getValue()));
         }
 
-        return addressRepository.findAll(spec, pageable).map(addressMapper::toGetDTO);
+        Page<AddressGetDTO> result = addressRepository.findAll(spec, pageable).map(addressMapper::toGetDTO);
+        log.info("Successfully retrieved {} addresses on page {}", result.getNumberOfElements(), pageable.getPageNumber());
+        return result;
     }
 
     private Specification<Address> createFilterSpecification(String key, String value) {
@@ -73,13 +80,16 @@ public class AddressService {
     }
 
     public AddressGetDTO getById(Integer id) {
+        log.info("Attempting to retrieve address with ID: {}", id);
         Address a = addressRepository.findById(id).orElseThrow(()->
                 new EntityNotFoundException("addressId"));
+        log.info("Successfully retrieved address with ID: {}", id);
         return addressMapper.toGetDTO(a);
     }
 
 
     public ResponseEntity<AddressGetDTO> create(AddressCreateDTO dto) {
+        log.info("Attempting to create a new address with DTO: {}", dto);
         City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("cityId"));
         if (addressRepository.findByAddressAndAddress2AndDistrictAndCityAndPostalCodeAndPhone(dto.address(), dto.address2(), dto.district(), city, dto.postalCode(), dto.phone()).isPresent())
             throw new DataIntegrityViolationException("Record with such fields already exists");
@@ -87,6 +97,7 @@ public class AddressService {
         Address address = addressMapper.toEntity(dto);
         address.setCity(city);
         Address saved = addressRepository.save(address);
+        log.info("Successfully created and saved address with ID: {}", saved.getAddressId());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -94,9 +105,11 @@ public class AddressService {
     }
 
     public ResponseEntity<Address> delete(Integer id) {
+        log.info("Attempting to delete address with ID: {}", id);
         Optional<Address> address = addressRepository.findById(id);
         if(address.isPresent()){
             addressRepository.delete(address.get());
+            log.info("Successfully deleted address with ID: {}", id);
             return ResponseEntity.ok().build();      }
         else{
             return ResponseEntity.notFound().build();
@@ -104,6 +117,7 @@ public class AddressService {
     }
 
     public ResponseEntity<AddressGetDTO> update(Integer id, AddressUpdateDTO dto) {
+        log.info("Attempting to update address with ID: {} using DTO: {}", id, dto);
         Optional<Address> optAddress = addressRepository.findById(id);
         if(optAddress.isPresent()){
             Address address = optAddress.get();
@@ -129,6 +143,7 @@ public class AddressService {
                 address.setPhone(dto.phone());
 
             Address saved = addressRepository.save(address);
+            log.info("Successfully updated address with ID: {}", saved.getAddressId());
             return ResponseEntity.ok().body(addressMapper.toGetDTO(address));
         }
         else{

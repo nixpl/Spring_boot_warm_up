@@ -12,6 +12,7 @@ import com.example.demo.model.Customer;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class CustomerService {
     private final CustomerRepository customerRepository;
@@ -37,6 +39,7 @@ public class CustomerService {
     }
 
     public Page<CustomerGetDTO> getAll(Map<String, String> params, Pageable pageable) {
+        log.info("Attempting to retrieve all customers with parameters: {} and pageable: {}", params, pageable);
         Map<String, String> filterParams = new java.util.HashMap<>(params);
 
         Specification<Customer> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
@@ -46,6 +49,7 @@ public class CustomerService {
         filterParams.remove("sort");
         String searchTerm = filterParams.remove("search");
         if (searchTerm != null && !searchTerm.isBlank()) {
+            log.info("Applying search term specification: {}", searchTerm);
             spec = spec.and(CustomerSpecifications.hasSearchTerm(searchTerm));
         }
 
@@ -55,10 +59,13 @@ public class CustomerService {
 
         if (!filterParams.isEmpty()) {
             Map.Entry<String, String> entry = filterParams.entrySet().iterator().next();
+            log.info("Applying filter specification with key: '{}' and value: '{}'", entry.getKey(), entry.getValue());
             spec = spec.and(createFilterSpecification(entry.getKey(), entry.getValue()));
         }
 
-        return customerRepository.findAll(spec, pageable).map(mapper::toGetDTO);
+        Page<CustomerGetDTO> result = customerRepository.findAll(spec, pageable).map(mapper::toGetDTO);
+        log.info("Successfully retrieved {} customers on page {}", result.getNumberOfElements(), pageable.getPageNumber());
+        return result;
     }
 
     private Specification<Customer> createFilterSpecification(String key, String value) {
@@ -77,11 +84,14 @@ public class CustomerService {
     }
 
     public CustomerGetDTO getById(Integer id) {
+        log.info("Attempting to retrieve customer with ID: {}", id);
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("customerId"));
+        log.info("Successfully retrieved customer with ID: {}", id);
         return mapper.toGetDTO(customer);
     }
 
     public ResponseEntity<CustomerGetDTO> create(CustomerCreateDTO dto) {
+        log.info("Attempting to create a new customer with DTO: {}", dto);
 
         if (customerRepository.findByEmail(dto.email()).isPresent()) {
             throw new DataIntegrityViolationException("Email is already taken");
@@ -99,6 +109,7 @@ public class CustomerService {
         customer.setAddress(address);
 
         Customer saved = customerRepository.save(customer);
+        log.info("Successfully created and saved customer with ID: {}", saved.getCustomerId());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -107,9 +118,11 @@ public class CustomerService {
 
 
     public ResponseEntity<Customer> delete(Integer id) {
+        log.info("Attempting to delete customer with ID: {}", id);
         Optional<Customer> customer = customerRepository.findById(id);
         if(customer.isPresent()){
             customerRepository.delete(customer.get());
+            log.info("Successfully deleted customer with ID: {}", id);
             return ResponseEntity.ok().build();      }
         else{
             throw new EntityNotFoundException("customerId");
@@ -117,6 +130,7 @@ public class CustomerService {
     }
 
     public ResponseEntity<CustomerGetDTO> update(Integer id, CustomerUpdateDTO dto) {
+        log.info("Attempting to update customer with ID: {} using DTO: {}", id, dto);
         Optional<Customer> optCustomer = customerRepository.findById(id);
         if(optCustomer.isPresent()){
             Customer customer = optCustomer.get();
@@ -155,6 +169,7 @@ public class CustomerService {
             customer.setLastUpdate(new Date());
 
             Customer saved = customerRepository.save(customer);
+            log.info("Successfully updated customer with ID: {}", saved.getCustomerId());
             return ResponseEntity.ok().body(mapper.toGetDTO(saved));
         }
         else{

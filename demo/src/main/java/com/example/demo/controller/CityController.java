@@ -27,9 +27,9 @@ public class CityController {
     }
 
     @GetMapping("/all")
-    public Page<CityGetDTO> getCites(@RequestParam(required = false) Map<String, String> filter, @ForCity @PageableDefault(page = 0, size = 10, sort = "cityId") Pageable pageable){
-        log.info("Received request to get all cities with filter: {} and pageable: {}", filter, pageable);
-        return cityService.getAll(filter, pageable);
+    public Page<CityGetDTO> getCites(@RequestParam(required = false) Map<String, String> params, @ForCity @PageableDefault(page = 0, size = 10, sort = "cityId") Pageable pageable){
+        log.info("Received request to get all cities with params: {} and pageable: {}", params, pageable);
+        return cityService.getAll(params, pageable);
     }
 
     @GetMapping("/{id}")
