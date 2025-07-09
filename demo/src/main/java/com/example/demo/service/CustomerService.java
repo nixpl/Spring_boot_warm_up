@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.TooManyFiltersException;
+import com.example.demo.exception.UnknownFilterParameterException;
 import com.example.demo.specification.CustomerSpecifications;
 import com.example.demo.dto.CustomerCreateDTO;
 import com.example.demo.dto.CustomerGetDTO;
@@ -49,8 +51,7 @@ public class CustomerService {
         }
 
         if (filterParams.size() > 1) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "You are allowed to use the 'search' parameter with at most one other filter.");
+            throw new TooManyFiltersException(filterParams.keySet());
         }
 
         if (!filterParams.isEmpty()) {
@@ -72,7 +73,7 @@ public class CustomerService {
             case "district" -> (root, query, cb) -> cb.equal(root.get("address").get("district"), value);
             case "city" -> (root, query, cb) -> cb.equal(root.get("address").get("city").get("city"), value);
             case "country" -> (root, query, cb) -> cb.equal(root.get("address").get("city").get("country").get("country"), value);
-            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown filter parameter: " + key);
+            default -> throw new UnknownFilterParameterException(key);
         };
     }
 

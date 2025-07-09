@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.TooManyFiltersException;
+import com.example.demo.exception.UnknownFilterParameterException;
 import com.example.demo.specification.AddressSpecifications;
 import com.example.demo.dto.AddressCreateDTO;
 import com.example.demo.dto.AddressGetDTO;
@@ -48,8 +50,7 @@ public class AddressService {
         }
 
         if (filterParams.size() > 1) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "You are allowed to use the 'search' parameter with at most one other filter.");
+            throw new TooManyFiltersException(filterParams.keySet());
         }
 
         if (!filterParams.isEmpty()) {
@@ -67,7 +68,7 @@ public class AddressService {
             case "district" -> (root, query, cb) -> cb.equal(root.get("district"), value);
             case "city" -> (root, query, cb) -> cb.equal(root.get("city").get("city"), value);
             case "country" -> (root, query, cb) -> cb.equal(root.get("city").get("country").get("country"), value);
-            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown filter parameter: " + key);
+            default -> throw new UnknownFilterParameterException(key);
         };
     }
 
