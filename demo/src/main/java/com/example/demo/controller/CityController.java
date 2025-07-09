@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.annotations.ForCity;
 import com.example.demo.dto.CityCreateDTO;
 import com.example.demo.dto.CityGetDTO;
 import com.example.demo.dto.CityUpdateDTO;
@@ -24,7 +25,7 @@ public class CityController {
     }
 
     @GetMapping("/all")
-    public Page<CityGetDTO> getCites(@RequestParam(required = false) Map<String, String> filter, @PageableDefault(page = 0, size = 10, sort = "cityId") Pageable pageable){
+    public Page<CityGetDTO> getCites(@RequestParam(required = false) Map<String, String> filter, @ForCity @PageableDefault(page = 0, size = 10, sort = "cityId") Pageable pageable){
         return cityService.getAll(filter, pageable);
     }
 

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.annotations.ForCustomer;
 import com.example.demo.dto.CustomerCreateDTO;
 import com.example.demo.dto.CustomerGetDTO;
 import com.example.demo.dto.CustomerUpdateDTO;
@@ -27,7 +28,7 @@ public class CustomerController {
     @GetMapping("/all")
     public Page<CustomerGetDTO> getCustomers(
             @RequestParam(required = false)Map<String, String> filter,
-            @PageableDefault(page = 0, size = 10, sort = "customerId") Pageable pageable){
+            @ForCustomer @PageableDefault(page = 0, size = 10, sort = "customerId") Pageable pageable){
         return customerService.getAll(filter, pageable);
     }
 

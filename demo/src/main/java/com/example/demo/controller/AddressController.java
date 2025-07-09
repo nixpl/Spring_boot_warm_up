@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.annotations.ForAddress;
 import com.example.demo.dto.AddressCreateDTO;
 import com.example.demo.dto.AddressGetDTO;
 import com.example.demo.dto.AddressUpdateDTO;
@@ -26,7 +27,7 @@ public class AddressController {
 
     @GetMapping("/all")
     public Page<AddressGetDTO> getAddresses(@RequestParam(required = false) Map<String, String> params,
-                                            @PageableDefault(page = 0, size = 10, sort = "addressId") Pageable pageable){
+                                            @ForAddress @PageableDefault(page = 0, size = 10, sort = "addressId") Pageable pageable){
         return addressService.getAll(params, pageable);
     }
 
