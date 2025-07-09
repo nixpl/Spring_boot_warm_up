@@ -4,6 +4,7 @@ import com.example.demo.annotations.ForCustomer;
 import com.example.demo.dto.CustomerCreateDTO;
 import com.example.demo.dto.CustomerGetDTO;
 import com.example.demo.dto.CustomerUpdateDTO;
+import com.example.demo.mapper.CustomerMapper;
 import com.example.demo.model.Customer;
 import com.example.demo.service.CustomerService;
 import jakarta.validation.Valid;
@@ -20,9 +21,13 @@ import java.util.Map;
 @RequestMapping("/customer")
 @Slf4j
 public class CustomerController {
+
+    private final CustomerMapper customerMapper;
+
     private final CustomerService customerService;
 
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerMapper customerMapper, CustomerService customerService) {
+        this.customerMapper = customerMapper;
         this.customerService = customerService;
     }
 
@@ -42,13 +47,13 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<CustomerGetDTO> createCustomer(@Valid @RequestBody CustomerCreateDTO customer){
-        log.info("Received request to create a new customer: {}", customer);
+        log.info("Received request to create a new customer: {}", customer.toString());
         return customerService.create(customer);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CustomerGetDTO> updateCustomer(@PathVariable Integer id, @Valid @RequestBody CustomerUpdateDTO customer){
-        log.info("Received request to update customer with ID: {} with data: {}", id, customer);
+        log.info("Received request to update customer with ID: {} with data: {}", id, customer.toString());
         return customerService.update(id, customer);
     }
 

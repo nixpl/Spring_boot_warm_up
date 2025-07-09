@@ -20,4 +20,20 @@ public record CustomerUpdateDTO(
 
                                  Integer active,
 
-                                Boolean activebool) {}
+                                Boolean activebool) {
+    @Override
+    public String toString() {
+        String censoredEmail = (email != null && email.contains("@")) ?
+                email.replaceAll("(?<=.{3}).(?=[^@]*?@)", "*") :
+                email;
+
+        return "CustomerDTO[" +
+                "storeId=" + storeId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + censoredEmail + '\'' +
+                ", addressId=" + addressId +
+                ", active=" + active +
+                ']';
+    }
+}
