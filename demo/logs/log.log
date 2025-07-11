@@ -1,0 +1,45 @@
+2025-07-11 09:12:43.529 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 24.0.1 with PID 11088 (C:\Users\michal\Desktop\DVDRENTAL\Spring_boot_warm_up\demo\target\classes started by michal in C:\Users\michal\Desktop\DVDRENTAL\Spring_boot_warm_up\demo)
+2025-07-11 09:12:43.534 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2025-07-11 09:12:44.347 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-11 09:12:44.463 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 104 ms. Found 4 JPA repository interfaces.
+2025-07-11 09:12:45.058 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-07-11 09:12:45.075 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-07-11 09:12:45.075 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-07-11 09:12:45.156 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-07-11 09:12:45.156 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1564 ms
+2025-07-11 09:12:45.344 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-11 09:12:45.399 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-07-11 09:12:45.435 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-07-11 09:12:45.747 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-11 09:12:45.772 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-07-11 09:12:46.032 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5e385b6f
+2025-07-11 09:12:46.033 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-07-11 09:12:46.093 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-11 09:12:46.903 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-11 09:12:47.180 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-11 09:12:47.664 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-11 09:12:48.138 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-07-11 09:12:48.146 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 5.134 seconds (process running for 5.608)
+2025-07-11 09:13:10.574 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-11 09:13:10.574 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-11 09:13:10.575 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-07-11 09:13:10.607 [http-nio-8080-exec-2] INFO  c.e.d.s.r.AbstractSortArgumentResolver - Resolving Pageable argument.
+2025-07-11 09:13:10.609 [http-nio-8080-exec-2] INFO  c.e.d.s.r.AbstractSortArgumentResolver - Initial Pageable resolved by parent: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-11 09:13:10.610 [http-nio-8080-exec-2] INFO  c.e.d.s.r.AbstractSortArgumentResolver - No sort alias found for property 'customerId', using as is.
+2025-07-11 09:13:10.610 [http-nio-8080-exec-2] INFO  c.e.d.s.r.AbstractSortArgumentResolver - Returning final Pageable object: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-11 09:13:10.610 [http-nio-8080-exec-2] INFO  c.e.d.controller.CustomerController - Received request to get all customers with params: {status=inactive} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-11 09:13:10.610 [http-nio-8080-exec-2] INFO  c.e.demo.service.CustomerService - Attempting to retrieve all customers with parameters: {status=inactive} and pageable: Page request [number: 0, size 10, sort: customerId: ASC]
+2025-07-11 09:13:10.611 [http-nio-8080-exec-2] INFO  c.e.demo.service.CustomerService - Applying filter specification with key: 'status' and value: 'inactive'
+2025-07-11 09:13:10.784 [http-nio-8080-exec-2] INFO  c.e.demo.service.CustomerService - Successfully retrieved 10 customers on page 0
+2025-07-11 09:13:33.075 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-07-11 09:13:33.082 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-07-11 09:13:33.086 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-11 09:13:33.089 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-07-11 09:13:33.092 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
