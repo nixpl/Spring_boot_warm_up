@@ -53,14 +53,11 @@ public class CustomerService {
             spec = spec.and(CustomerSpecifications.hasSearchTerm(searchTerm));
         }
 
-        if (filterParams.size() > 1) {
-            throw new TooManyFiltersException(filterParams.keySet());
-        }
-
         if (!filterParams.isEmpty()) {
-            Map.Entry<String, String> entry = filterParams.entrySet().iterator().next();
-            log.info("Applying filter specification with key: '{}' and value: '{}'", entry.getKey(), entry.getValue());
-            spec = spec.and(createFilterSpecification(entry.getKey(), entry.getValue()));
+            for (Map.Entry<String, String> entry : filterParams.entrySet()){
+                log.info("Applying filter specification with key: '{}' and value: '{}'", entry.getKey(), entry.getValue());
+                spec = spec.and(createFilterSpecification(entry.getKey(), entry.getValue()));
+            }
         }
 
         Page<CustomerGetDTO> result = customerRepository.findAll(spec, pageable).map(mapper::toGetDTO);
@@ -69,11 +66,19 @@ public class CustomerService {
     }
 
     private Specification<Customer> createFilterSpecification(String key, String value) {
+        Map<String,Integer> statusToActiveValues = Map.of(  "active", 1,
+                                                            "inactive", 0);
+
         return switch (key) {
             case "firstName" -> (root, query, cb) -> cb.equal(root.get("firstName"), value);
             case "lastName" -> (root, query, cb) -> cb.equal(root.get("lastName"), value);
             case "email" -> (root, query, cb) -> cb.equal(root.get("email"), value);
-            case "active" -> (root, query, cb) -> cb.equal(root.get("active"), Integer.parseInt(value));
+            case "status" -> (root, query, cb) -> {
+                if (statusToActiveValues.containsKey(value))
+                    return cb.equal(root.get("active"), statusToActiveValues.get(value));
+                else
+                    throw new UnknownFilterParameterException(key);
+            };
             case "address" -> (root, query, cb) -> cb.equal(root.get("address").get("address"), value);
             case "address2" -> (root, query, cb) -> cb.equal(root.get("address").get("address2"), value);
             case "district" -> (root, query, cb) -> cb.equal(root.get("address").get("district"), value);

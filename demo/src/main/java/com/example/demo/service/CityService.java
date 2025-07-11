@@ -54,14 +54,11 @@ public class CityService {
             spec = spec.and(CitySpecifications.hasSearchTerm(searchTerm));
         }
 
-        if (filterParams.size() > 1) {
-            throw new TooManyFiltersException(filterParams.keySet());
-        }
-
         if (!filterParams.isEmpty()) {
-            Map.Entry<String, String> entry = filterParams.entrySet().iterator().next();
-            log.info("Applying filter specification with key: '{}' and value: '{}'", entry.getKey(), entry.getValue());
-            spec = spec.and(createFilterSpecification(entry.getKey(), entry.getValue()));
+            for (Map.Entry<String, String> entry : filterParams.entrySet()){
+                log.info("Applying filter specification with key: '{}' and value: '{}'", entry.getKey(), entry.getValue());
+                spec = spec.and(createFilterSpecification(entry.getKey(), entry.getValue()));
+            }
         }
 
         Page<CityGetDTO> result = cityRepository.findAll(spec, pageable).map(cityMapper::toGetDTO);
