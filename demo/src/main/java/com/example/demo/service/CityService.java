@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.exception.TooManyFiltersException;
 import com.example.demo.exception.UnknownFilterParameterException;
 import com.example.demo.specification.CitySpecifications;
 import com.example.demo.dto.CityCreateDTO;
@@ -20,7 +19,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.Map;

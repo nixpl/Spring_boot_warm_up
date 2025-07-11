@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.exception.TooManyFiltersException;
 import com.example.demo.exception.UnknownFilterParameterException;
 import com.example.demo.specification.CustomerSpecifications;
 import com.example.demo.dto.CustomerCreateDTO;
