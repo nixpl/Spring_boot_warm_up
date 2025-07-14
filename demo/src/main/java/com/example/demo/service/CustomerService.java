@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.api.DisifyApi;
+import com.example.demo.exception.DisposableEmailException;
 import com.example.demo.exception.UnknownFilterParameterException;
 import com.example.demo.specification.CustomerSpecifications;
 import com.example.demo.dto.CustomerCreateDTO;
@@ -30,11 +32,13 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
     private final CustomerMapper mapper;
+    private final DisifyApi disifyApi;
 
-    public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository, CustomerMapper mapper) {
+    public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository, CustomerMapper mapper, DisifyApi disifyApi) {
         this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
         this.mapper = mapper;
+        this.disifyApi = disifyApi;
     }
 
     public Page<CustomerGetDTO> getAll(Map<String, String> params, Pageable pageable) {
@@ -100,6 +104,8 @@ public class CustomerService {
         if (customerRepository.findByEmail(dto.email()).isPresent()) {
             throw new DataIntegrityViolationException("Email is already taken");
         }
+
+        if (disifyApi.isDisposable(dto.email())) {throw new DisposableEmailException(dto.email());}
 
         if (dto.firstName().isEmpty() || dto.lastName().isEmpty() || dto.email().isEmpty()) {
             throw new DataIntegrityViolationException("Name and email cannot be empty");
