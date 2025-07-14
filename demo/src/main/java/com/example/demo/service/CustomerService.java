@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.api.DisifyApi;
+import com.example.demo.api.GenderizeApi;
 import com.example.demo.exception.DisposableEmailException;
 import com.example.demo.exception.UnknownFilterParameterException;
 import com.example.demo.specification.CustomerSpecifications;
@@ -112,6 +113,7 @@ public class CustomerService {
         }
 
         Customer customer = mapper.toEntity(dto);
+        customer.setGender(GenderizeApi.deduceGender(dto.firstName()));
 
         Address address = addressRepository.findById(dto.addressId())
                 .orElseThrow(() -> new EntityNotFoundException("addressId"));
