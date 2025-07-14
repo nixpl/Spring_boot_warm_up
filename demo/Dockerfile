@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk AS build
+FROM eclipse-temurin:17-jdk AS build
 
 ENV TZ=Europe/Warsaw
 
@@ -15,7 +15,7 @@ RUN chmod +x mvnw
 RUN ./mvnw clean package -DskipTests
 
 
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:17-jdk
 
 
 WORKDIR /app
