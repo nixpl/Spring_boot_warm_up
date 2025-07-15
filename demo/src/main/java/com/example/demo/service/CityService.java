@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.info.ExceptionInfo;
 import com.example.demo.exception.UnknownFilterParameterException;
 import com.example.demo.specification.CitySpecifications;
 import com.example.demo.dto.CityCreateDTO;
@@ -10,9 +12,8 @@ import com.example.demo.model.City;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CityRepository;
 import com.example.demo.repository.CountryRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -68,27 +69,29 @@ public class CityService {
         return switch (key) {
             case "city" -> (root, query, cb) -> cb.equal(root.get("city"), value);
             case "country" -> (root, query, cb) -> cb.equal(root.get("country").get("country"), value);
-            default -> throw new UnknownFilterParameterException(key);
+            default -> throw new UnknownFilterParameterException(ExceptionInfo.UNKNOWN_CITY_FILTER_PARAMETER, key);
         };
     }
 
 
     public City getById(Integer id) {
         log.info("Attempting to retrieve city with ID: {}", id);
-        City city = cityRepository.findById(id).orElseThrow(() ->  new EntityNotFoundException("cityId"));
+        City city = cityRepository.findById(id).orElseThrow(() ->  new EntityNotFoundException(ExceptionInfo.ENTITY_CITY_NOT_FOUND, id));
         log.info("Successfully retrieved city with ID: {}", id);
         return city;
     }
 
     public ResponseEntity<City> create(CityCreateDTO newCity) {
         log.info("Attempting to create a new city with DTO: {}", newCity);
-        if(newCity.countryId() == null || newCity.city() == null || newCity.city().isEmpty()){
-            throw new DataIntegrityViolationException("City name and country cannot be empty");
-        }
+
+//        Chyba niepotrzebne
+//        if(newCity.countryId() == null || newCity.city() == null || newCity.city().isEmpty()){
+//            throw new DataIntegrityViolationException("City name and country cannot be empty");
+//        }
 
         City city = new City();
         city.setCity(newCity.city());
-        Country country = countryRepository.findById(newCity.countryId()).orElseThrow(() -> new EntityNotFoundException("countryId"));
+        Country country = countryRepository.findById(newCity.countryId()).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_COUNTRY_NOT_FOUND, newCity.countryId()));
         city.setCountry(country);
         city.setLastUpdate(new Date());
 
@@ -101,8 +104,8 @@ public class CityService {
 
     public ResponseEntity<City> update(Integer  id, CityUpdateDTO dto) {
         log.info("Attempting to update city with ID: {} using DTO: {}", id, dto);
-        City city = cityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("cityId"));
-        Country country = countryRepository.findById(dto.countryId()).orElseThrow(() -> new EntityNotFoundException("countryId"));
+        City city = cityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_CITY_NOT_FOUND, id));
+        Country country = countryRepository.findById(dto.countryId()).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_COUNTRY_NOT_FOUND, dto.countryId()));
 
         if(dto.city() != null)
             city.setCity(dto.city());
@@ -124,7 +127,7 @@ public class CityService {
             return ResponseEntity.ok().build();
         }
         else{
-            throw new EntityNotFoundException("cityId");
+            throw new EntityNotFoundException(ExceptionInfo.ENTITY_CITY_NOT_FOUND, id);
         }
     }
 }

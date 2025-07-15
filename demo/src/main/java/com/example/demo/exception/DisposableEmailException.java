@@ -1,12 +1,15 @@
 package com.example.demo.exception;
 
+import com.example.demo.exception.info.ExceptionInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class DisposableEmailException extends RuntimeException {
+public class DisposableEmailException extends UniversalException {
 
-    public DisposableEmailException(String email) {
-        super("You cannot use temporary emails: " + email);
+    public DisposableEmailException(ExceptionInfo exceptionInfo) {
+        super(exceptionInfo);
+    }
+    public DisposableEmailException(ExceptionInfo exceptionInfo, Object... args) {
+        super(exceptionInfo,args);
     }
 }

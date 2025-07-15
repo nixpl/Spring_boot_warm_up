@@ -1,12 +1,17 @@
 package com.example.demo.exception;
 
+import com.example.demo.exception.info.ExceptionInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class UnknownFilterParameterException extends RuntimeException {
+public class UnknownFilterParameterException extends UniversalException {
 
-    public UnknownFilterParameterException(String parameterName) {
-        super("Unknown filter parameter: " + parameterName);
+    public UnknownFilterParameterException(ExceptionInfo exceptionInfo) {
+        super(exceptionInfo);
+    }
+
+    public UnknownFilterParameterException(ExceptionInfo exceptionInfo, Object... args) {
+        super(exceptionInfo,args);
     }
 }

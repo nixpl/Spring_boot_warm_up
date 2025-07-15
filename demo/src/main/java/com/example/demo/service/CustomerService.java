@@ -2,8 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.api.DisifyApi;
 import com.example.demo.api.GenderizeApi;
-import com.example.demo.exception.DisposableEmailException;
-import com.example.demo.exception.UnknownFilterParameterException;
+import com.example.demo.exception.*;
+import com.example.demo.exception.info.ExceptionInfo;
 import com.example.demo.specification.CustomerSpecifications;
 import com.example.demo.dto.CustomerCreateDTO;
 import com.example.demo.dto.CustomerGetDTO;
@@ -13,9 +13,7 @@ import com.example.demo.model.Address;
 import com.example.demo.model.Customer;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CustomerRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,13 +31,11 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
     private final CustomerMapper mapper;
-    private final DisifyApi disifyApi;
 
-    public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository, CustomerMapper mapper, DisifyApi disifyApi) {
+    public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository, CustomerMapper mapper) {
         this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
         this.mapper = mapper;
-        this.disifyApi = disifyApi;
     }
 
     public Page<CustomerGetDTO> getAll(Map<String, String> params, Pageable pageable) {
@@ -81,20 +77,20 @@ public class CustomerService {
                 if (statusToActiveValues.containsKey(value))
                     return cb.equal(root.get("active"), statusToActiveValues.get(value));
                 else
-                    throw new UnknownFilterParameterException(key);
+                    throw new WrongFilterArgumentException(ExceptionInfo.WRONG_CUSTOMER_FILTER_ARGUMENT, value, key);
             };
             case "address" -> (root, query, cb) -> cb.equal(root.get("address").get("address"), value);
             case "address2" -> (root, query, cb) -> cb.equal(root.get("address").get("address2"), value);
             case "district" -> (root, query, cb) -> cb.equal(root.get("address").get("district"), value);
             case "city" -> (root, query, cb) -> cb.equal(root.get("address").get("city").get("city"), value);
             case "country" -> (root, query, cb) -> cb.equal(root.get("address").get("city").get("country").get("country"), value);
-            default -> throw new UnknownFilterParameterException(key);
+            default -> throw new UnknownFilterParameterException(ExceptionInfo.UNKNOWN_CUSTOMER_FILTER_PARAMETER, key);
         };
     }
 
     public CustomerGetDTO getById(Integer id) {
         log.info("Attempting to retrieve customer with ID: {}", id);
-        Customer customer = customerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("customerId"));
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_CUSTOMER_NOT_FOUND, id));
         log.info("Successfully retrieved customer with ID: {}", id);
         return mapper.toGetDTO(customer);
     }
@@ -103,20 +99,16 @@ public class CustomerService {
         log.info("Attempting to create a new customer with DTO: {}", dto);
 
         if (customerRepository.findByEmail(dto.email()).isPresent()) {
-            throw new DataIntegrityViolationException("Email is already taken");
+            throw new DataIntegrityViolationException(ExceptionInfo.CUSTOMER_EMAIL_TAKEN, dto.email());
         }
 
-        if (disifyApi.isDisposable(dto.email())) {throw new DisposableEmailException(dto.email());}
-
-        if (dto.firstName().isEmpty() || dto.lastName().isEmpty() || dto.email().isEmpty()) {
-            throw new DataIntegrityViolationException("Name and email cannot be empty");
-        }
+        if (DisifyApi.isDisposable(dto.email())) {throw new DisposableEmailException(ExceptionInfo.CUSTOMER_EMAIL_IS_DISPOSABLE, dto.email());}
 
         Customer customer = mapper.toEntity(dto);
         customer.setGender(GenderizeApi.deduceGender(dto.firstName()));
 
         Address address = addressRepository.findById(dto.addressId())
-                .orElseThrow(() -> new EntityNotFoundException("addressId"));
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_ADDRESS_NOT_FOUND, dto.addressId()));
 
         customer.setAddress(address);
 
@@ -137,7 +129,7 @@ public class CustomerService {
             log.info("Successfully deleted customer with ID: {}", id);
             return ResponseEntity.ok().build();      }
         else{
-            throw new EntityNotFoundException("customerId");
+            throw new EntityNotFoundException(ExceptionInfo.ENTITY_CUSTOMER_NOT_FOUND, id);
         }
     }
 
@@ -155,15 +147,18 @@ public class CustomerService {
             if(dto.lastName() != null && !dto.lastName().isEmpty())
                 customer.setLastName(dto.lastName());
 
+            if(dto.gender() != null)
+                customer.setGender(dto.gender());
+
             if(dto.email() != null && !dto.email().isEmpty()) {
                 if (customerRepository.findByEmail(dto.email()).isPresent() && !dto.email().equals(customer.getEmail())) {
-                    throw new DataIntegrityViolationException("Wrong email");
+                    throw new DataIntegrityViolationException(ExceptionInfo.CUSTOMER_EMAIL_TAKEN, dto.email());
                 }
                 customer.setEmail(dto.email());
             }
 
             if(dto.addressId() != null) {
-                Address address = addressRepository.findById(dto.addressId()).orElseThrow(() -> new EntityNotFoundException("addressId"));
+                Address address = addressRepository.findById(dto.addressId()).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_ADDRESS_NOT_FOUND, dto.addressId()));
                 customer.setAddress(address);
             }
 
@@ -172,7 +167,7 @@ public class CustomerService {
                 if (dto.active() == 0 || dto.active() == 1)
                     customer.setActive(dto.active());
                 else
-                    throw new DataIntegrityViolationException("active must be 0 or 1");
+                    throw new DataIntegrityViolationException(ExceptionInfo.INPUT_VALIDATION_ERROR, "active", "active must be one of {0, 1}");
             }
 
             if(dto.activebool() != null)
@@ -185,7 +180,7 @@ public class CustomerService {
             return ResponseEntity.ok().body(mapper.toGetDTO(saved));
         }
         else{
-            throw new EntityNotFoundException("customerId");
+            throw new EntityNotFoundException(ExceptionInfo.ENTITY_CUSTOMER_NOT_FOUND, id);
         }
     }
 }
