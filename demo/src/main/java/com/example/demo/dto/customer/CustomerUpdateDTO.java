@@ -1,6 +1,5 @@
-package com.example.demo.dto;
+package com.example.demo.dto.customer;
 
-import com.example.demo.model.Address;
 import com.example.demo.model.Gender;
 import jakarta.validation.constraints.*;
 

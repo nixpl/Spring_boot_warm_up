@@ -1,9 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.annotations.ForAddress;
-import com.example.demo.dto.AddressCreateDTO;
-import com.example.demo.dto.AddressGetDTO;
-import com.example.demo.dto.AddressUpdateDTO;
+import com.example.demo.dto.address.AddressCreateDTO;
+import com.example.demo.dto.address.AddressGetDTO;
+import com.example.demo.dto.address.AddressUpdateDTO;
 import com.example.demo.model.Address;
 import com.example.demo.service.AddressService;
 import jakarta.validation.Valid;

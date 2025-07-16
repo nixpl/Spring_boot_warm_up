@@ -1,7 +1,7 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.CustomerCreateDTO;
-import com.example.demo.dto.CustomerGetDTO;
+import com.example.demo.dto.customer.CustomerCreateDTO;
+import com.example.demo.dto.customer.CustomerGetDTO;
 import com.example.demo.model.Customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

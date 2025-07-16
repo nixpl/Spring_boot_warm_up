@@ -1,9 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.annotations.ForCity;
-import com.example.demo.dto.CityCreateDTO;
-import com.example.demo.dto.CityGetDTO;
-import com.example.demo.dto.CityUpdateDTO;
+import com.example.demo.dto.city.CityCreateDTO;
+import com.example.demo.dto.city.CityGetDTO;
+import com.example.demo.dto.city.CityUpdateDTO;
 import com.example.demo.model.City;
 import com.example.demo.service.CityService;
 import jakarta.validation.Valid;

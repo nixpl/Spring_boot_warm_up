@@ -1,6 +1,5 @@
-package com.example.demo.dto;
+package com.example.demo.dto.exception;
 
-import com.example.demo.exception.UniversalException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Map;

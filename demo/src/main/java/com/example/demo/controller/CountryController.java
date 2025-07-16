@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.CountryCreateDTO;
-import com.example.demo.dto.CountryGetDTO;
-import com.example.demo.dto.CountryUpdateDTO;
+import com.example.demo.dto.country.CountryCreateDTO;
+import com.example.demo.dto.country.CountryGetDTO;
+import com.example.demo.dto.country.CountryUpdateDTO;
 import com.example.demo.model.Country;
 import com.example.demo.service.CountryService;
 import jakarta.validation.Valid;
