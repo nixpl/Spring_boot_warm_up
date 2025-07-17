@@ -45,13 +45,21 @@ public class RentalService {
     public ResponseEntity<RentalGetDTO> rentFilm(RentalCreateDTO dto) {
         log.info("Attempting to create a new rental with DTO: {}", dto);
         Rental rental = rentalMapper.toEntity(dto);
-        for(Rental r : rentalRepository.findByInventory(rental.getInventory())){
-            if(r.getReturnDate() == null) { throw new DataIntegrityViolationException(ExceptionInfo.FILM_IS_NOT_AVAILABLE, dto.customerId());}
-        }
+        rentalRepository.findByInventory(rental.getInventory())
+                .stream()
+                .filter(r -> r.getReturnDate() == null)
+                .findAny()
+                .ifPresent(r -> {
+                    throw new DataIntegrityViolationException(ExceptionInfo.FILM_IS_NOT_AVAILABLE, dto.customerId());
+                });
 
-        for(Rental r : rentalRepository.findByCustomer(rental.getCustomer())){
-            if(r.getReturnDate() == null) { throw new DataIntegrityViolationException(ExceptionInfo.FILM_IS_NOT_AVAILABLE, dto.customerId());}
-        }
+        rentalRepository.findByCustomer(rental.getCustomer())
+                .stream()
+                .filter(r -> r.getReturnDate() == null)
+                .findAny()
+                .ifPresent(r -> {
+                    throw new DataIntegrityViolationException(ExceptionInfo.FILM_IS_NOT_AVAILABLE, dto.customerId());
+                });
 
         rental.setInventory(inventoryRepository.findById(dto.inventoryId()).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_INVENTORY_NOT_FOUND, dto.inventoryId())));
         rental.setCustomer(customerRepository.findById(dto.customerId()).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_CUSTOMER_NOT_FOUND, dto.customerId())));

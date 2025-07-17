@@ -24,6 +24,7 @@ public class RentalController {
     @GetMapping("/{id}")
     public RentalGetDTO getRental(@PathVariable Integer id){
         log.info("Received request to get rental with ID: {}", id);
+
         return rentalService.getById(id);
     }
 

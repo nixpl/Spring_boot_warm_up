@@ -13,6 +13,7 @@ public record CustomerGetDTO(
         String lastName,
         Gender gender,
         String email,
-        AddressGetDTO address
+        AddressGetDTO address,
+        Boolean activebool
 ) {
 }
