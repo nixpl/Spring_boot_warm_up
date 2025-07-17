@@ -4,6 +4,7 @@ import com.example.demo.model.Customer;
 import com.example.demo.model.Rental;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.repository.RentalRepository;
+import com.example.demo.kafka.KafkaLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -20,10 +21,12 @@ public class Scheduler {
 
     private final RentalRepository rentalRepository;
     private final CustomerRepository customerRepository;
+    private final KafkaLogService kafkaLogService;
 
-    public Scheduler(RentalRepository rentalRepository, CustomerRepository customerRepository) {
+    public Scheduler(RentalRepository rentalRepository, CustomerRepository customerRepository, KafkaLogService kafkaLogService) {
         this.rentalRepository = rentalRepository;
         this.customerRepository = customerRepository;
+        this.kafkaLogService = kafkaLogService;
     }
 
     protected int calculateDaysDiff(Date dateA, Date dateB)
@@ -48,7 +51,9 @@ public class Scheduler {
         List<Rental> delayedRentals = rentalRepository.findDelayedRentals(marginDate);
 
         if (delayedRentals.isEmpty()) {
-            log.info("No delayed rentals found. Skipping report generation.");
+            String msg = "No delayed rentals found. Skipping report generation.";
+            log.info(msg);
+            kafkaLogService.sendLog(msg);
             return;
         }
 
@@ -80,7 +85,9 @@ public class Scheduler {
             ));
         }
 
-        log.info(reportBuilder.toString());
+        String report = reportBuilder.toString();
+//        log.info(report);
+        kafkaLogService.sendLog(report);
     }
 
 
