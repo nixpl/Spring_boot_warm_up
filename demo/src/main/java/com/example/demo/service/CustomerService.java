@@ -88,11 +88,11 @@ public class CustomerService {
         };
     }
 
-    public CustomerGetDTO getById(Integer id) {
+    public ResponseEntity<CustomerGetDTO> getById(Integer id) {
         log.info("Attempting to retrieve customer with ID: {}", id);
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_CUSTOMER_NOT_FOUND, id));
         log.info("Successfully retrieved customer with ID: {}", id);
-        return mapper.toGetDTO(customer);
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.toGetDTO(customer));
     }
 
     public ResponseEntity<CustomerGetDTO> create(CustomerCreateDTO dto) {
@@ -121,13 +121,13 @@ public class CustomerService {
     }
 
 
-    public ResponseEntity<Customer> delete(Integer id) {
+    public ResponseEntity<Void> delete(Integer id) {
         log.info("Attempting to delete customer with ID: {}", id);
         Optional<Customer> customer = customerRepository.findById(id);
         if(customer.isPresent()){
             customerRepository.delete(customer.get());
             log.info("Successfully deleted customer with ID: {}", id);
-            return ResponseEntity.ok().build();      }
+            return ResponseEntity.noContent().build();      }
         else{
             throw new EntityNotFoundException(ExceptionInfo.ENTITY_CUSTOMER_NOT_FOUND, id);
         }

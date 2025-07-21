@@ -22,12 +22,9 @@ import java.util.Map;
 @Slf4j
 public class CustomerController {
 
-    private final CustomerMapper customerMapper;
-
     private final CustomerService customerService;
 
-    public CustomerController(CustomerMapper customerMapper, CustomerService customerService) {
-        this.customerMapper = customerMapper;
+    public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
 
@@ -40,7 +37,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public CustomerGetDTO getCustomer(@PathVariable Integer id){
+    public ResponseEntity<CustomerGetDTO> getCustomer(@PathVariable Integer id){
         log.info("Received request to get customer with ID: {}", id);
         return customerService.getById(id);
     }
@@ -58,7 +55,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Customer> deleteCustomer(@PathVariable Integer id){
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Integer id){
         log.info("Received request to delete customer with ID: {}", id);
         return customerService.delete(id);
     }

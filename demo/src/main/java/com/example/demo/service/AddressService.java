@@ -75,12 +75,12 @@ public class AddressService {
         };
     }
 
-    public AddressGetDTO getById(Integer id) {
+    public ResponseEntity<AddressGetDTO> getById(Integer id) {
         log.info("Attempting to retrieve address with ID: {}", id);
         Address a = addressRepository.findById(id).orElseThrow(()->
                 new EntityNotFoundException(ExceptionInfo.ENTITY_ADDRESS_NOT_FOUND, id));
         log.info("Successfully retrieved address with ID: {}", id);
-        return addressMapper.toGetDTO(a);
+        return ResponseEntity.status(HttpStatus.OK).body(addressMapper.toGetDTO(a));
     }
 
 
@@ -100,15 +100,15 @@ public class AddressService {
                 .body(addressMapper.toGetDTO(saved));
     }
 
-    public ResponseEntity<Address> delete(Integer id) {
+    public ResponseEntity<Void> delete(Integer id) {
         log.info("Attempting to delete address with ID: {}", id);
         Optional<Address> address = addressRepository.findById(id);
         if(address.isPresent()){
             addressRepository.delete(address.get());
             log.info("Successfully deleted address with ID: {}", id);
-            return ResponseEntity.ok().build();      }
+            return ResponseEntity.noContent().build();      }
         else{
-            return ResponseEntity.notFound().build();
+            throw new  EntityNotFoundException(ExceptionInfo.ENTITY_ADDRESS_NOT_FOUND, id);
         }
     }
 

@@ -34,25 +34,25 @@ public class CountryController {
     }
 
     @GetMapping("/{id}")
-    public Country getCountryById(@PathVariable Integer id) {
+    public ResponseEntity<CountryGetDTO> getCountryById(@PathVariable Integer id) {
         log.info("Received request to get country with ID: {}", id);
         return countryService.getById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Country> createCountry(@Valid @RequestBody CountryCreateDTO country) {
+    public ResponseEntity<CountryGetDTO> createCountry(@Valid @RequestBody CountryCreateDTO country) {
         log.info("Received request to create a new country: {}", country);
         return countryService.create(country);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Country> updateCountry(@PathVariable Integer id, @Valid @RequestBody CountryUpdateDTO country) {
+    public ResponseEntity<CountryGetDTO> updateCountry(@PathVariable Integer id, @Valid @RequestBody CountryUpdateDTO country) {
         log.info("Received request to update country with ID: {} with data: {}", id, country);
         return countryService.update(id, country);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Country> deleteCountry(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteCountry(@PathVariable Integer id) {
         log.info("Received request to delete country with ID: {}", id);
         return countryService.delete(id);
     }
