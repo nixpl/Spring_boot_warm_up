@@ -119,10 +119,31 @@ public final class DTOFactory {
                 "Marek",
                 null,
                 null,
-                null,
-                null,
+                "marek.kowalski@gmail.com",
+                1,
                 null,
                 null);
+    }
+
+    public static CustomerUpdateDTO createDefaultCustomerUpdateWithBadActiveValueDto() {
+        return new CustomerUpdateDTO( null,
+                "Marek",
+                null,
+                null,
+                "marek.kowalski@gmail.com",
+                1,
+                -1,
+                null);
+    }
+
+    public static CustomerGetDTO createDefaultCustomerUpdatedGetDto(Integer customerId) {
+        return new CustomerGetDTO(customerId,
+                "Marek",
+                "Kowalski",
+                Gender.MALE,
+                "marek.kowalski@gmail.com",
+                createDefaultAddressGetDto(1),
+                true);
     }
 
 

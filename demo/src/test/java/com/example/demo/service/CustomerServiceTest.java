@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.customer.CustomerCreateDTO;
 import com.example.demo.dto.customer.CustomerGetDTO;
+import com.example.demo.dto.customer.CustomerUpdateDTO;
 import com.example.demo.exception.DataIntegrityViolationException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.UnknownFilterParameterException;
@@ -145,4 +146,115 @@ public class CustomerServiceTest {
 
         assertEquals(page, customerPage.map(customerMapper::toGetDTO));
     }
+
+    @Test
+    void getById_shouldReturnCustomer_whenIdExists() {
+        Integer customerId = 1;
+        Customer expectedCustomer = DTOFactory.createDefaultCustomer(1);
+        CustomerGetDTO expectedCustomerGetDTO = DTOFactory.createDefaultCustomerGetDto(1);
+        ResponseEntity<CustomerGetDTO> expectedResponse = ResponseEntity.status(HttpStatus.OK).body(expectedCustomerGetDTO);
+
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(expectedCustomer));
+        when(customerMapper.toGetDTO(expectedCustomer)).thenReturn(expectedCustomerGetDTO);
+
+        assertEquals(expectedResponse, customerService.getById(customerId));
+    }
+
+    @Test
+    void getById_shouldThrowException_whenIncorrectId() {
+        Integer customerId = 1;
+        when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {customerService.getById(customerId);});
+
+    }
+
+    @Test
+    void delete_shouldDeleteCustomer_whenIdExists() {
+        Integer customerId = 1;
+        Customer expectedCustomer = DTOFactory.createDefaultCustomer(1);
+        ResponseEntity<Void> expectedResponse = ResponseEntity.noContent().build();
+
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(expectedCustomer));
+
+        assertEquals(expectedResponse, customerService.delete(customerId));
+    }
+
+    @Test
+    void delete_shouldThrowException_whenIncorrectId() {
+        Integer customerId = 1;
+
+        when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> customerService.delete(customerId));
+    }
+
+    @Test
+    void update_shouldUpdateCustomer_whenCorrectInput() {
+        Integer customerId = 1;
+        Customer expectedCustomer = DTOFactory.createDefaultCustomer(1);
+        CustomerUpdateDTO customerUpdateDTO = DTOFactory.createDefaultCustomerUpdateDto();
+
+        CustomerGetDTO expectedUpdatedCustomerGetDTO = DTOFactory.createDefaultCustomerUpdatedGetDto(1);
+
+        ResponseEntity<CustomerGetDTO> expectedResponse = ResponseEntity.ok().body(expectedUpdatedCustomerGetDTO);
+
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(expectedCustomer));
+        when(customerRepository.save(expectedCustomer)).thenReturn(expectedCustomer);
+        when(customerMapper.toGetDTO(expectedCustomer)).thenReturn(expectedUpdatedCustomerGetDTO);
+        when(customerRepository.findByEmail(customerUpdateDTO.email())).thenReturn(Optional.empty());
+        when(addressRepository.findById(customerUpdateDTO.addressId())).thenReturn(Optional.of(new Address()));
+
+        assertEquals(expectedResponse.getBody().firstName(), customerService.update(customerId, customerUpdateDTO).getBody().firstName());
+    }
+
+    @Test
+    void update_shouldThrowException_whenIncorrectId() {
+        Integer customerId = 1;
+        CustomerUpdateDTO customerUpdateDTO = DTOFactory.createDefaultCustomerUpdateDto();
+
+        when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> customerService.update(customerId, customerUpdateDTO));
+    }
+
+    @Test
+    void update_shouldThrowException_whenEmailTaken(){
+        Integer customerId = 1;
+        Customer customer = DTOFactory.createDefaultCustomer(1);
+        CustomerUpdateDTO customerUpdateDTO = DTOFactory.createDefaultCustomerUpdateDto();
+
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
+        when(customerRepository.findByEmail(customerUpdateDTO.email())).thenReturn(Optional.of(customer));
+
+        assertThrows(DataIntegrityViolationException.class, () -> customerService.update(customerId, customerUpdateDTO));
+    }
+
+    @Test
+    void update_shouldThrowException_whenAddressNotExists() {
+        Integer customerId = 1;
+        Customer customer = DTOFactory.createDefaultCustomer(1);
+        CustomerUpdateDTO customerUpdateDTO = DTOFactory.createDefaultCustomerUpdateDto();
+
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
+        when(customerRepository.findByEmail(customerUpdateDTO.email())).thenReturn(Optional.empty());
+        when(addressRepository.findById(customerUpdateDTO.addressId())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> customerService.update(customerId, customerUpdateDTO));
+    }
+
+    @Test
+    void update_shouldThrowException_whenIncorrectActiveInput() {
+        Integer customerId = 1;
+        Customer customer = DTOFactory.createDefaultCustomer(1);
+        CustomerUpdateDTO customerUpdateDTO = DTOFactory.createDefaultCustomerUpdateWithBadActiveValueDto();
+
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
+        when(customerRepository.findByEmail(customerUpdateDTO.email())).thenReturn(Optional.empty());
+        when(addressRepository.findById(customerUpdateDTO.addressId())).thenReturn(Optional.of(new Address()));
+
+        assertThrows(DataIntegrityViolationException.class, () -> customerService.update(customerId, customerUpdateDTO));
+    }
+
+
 }
