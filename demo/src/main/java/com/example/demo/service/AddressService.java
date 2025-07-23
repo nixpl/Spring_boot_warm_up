@@ -1,5 +1,8 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.DataIntegrityViolationException;
+import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.info.ExceptionInfo;
 import com.example.demo.exception.UnknownFilterParameterException;
 import com.example.demo.specification.AddressSpecifications;
 import com.example.demo.dto.AddressCreateDTO;
@@ -10,9 +13,7 @@ import com.example.demo.model.Address;
 import com.example.demo.model.City;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CityRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -70,14 +71,14 @@ public class AddressService {
             case "district" -> (root, query, cb) -> cb.equal(root.get("district"), value);
             case "city" -> (root, query, cb) -> cb.equal(root.get("city").get("city"), value);
             case "country" -> (root, query, cb) -> cb.equal(root.get("city").get("country").get("country"), value);
-            default -> throw new UnknownFilterParameterException(key);
+            default -> throw new UnknownFilterParameterException(ExceptionInfo.UNKNOWN_ADDRESS_FILTER_PARAMETER, key);
         };
     }
 
     public AddressGetDTO getById(Integer id) {
         log.info("Attempting to retrieve address with ID: {}", id);
         Address a = addressRepository.findById(id).orElseThrow(()->
-                new EntityNotFoundException("addressId"));
+                new EntityNotFoundException(ExceptionInfo.ENTITY_ADDRESS_NOT_FOUND, id));
         log.info("Successfully retrieved address with ID: {}", id);
         return addressMapper.toGetDTO(a);
     }
@@ -85,9 +86,9 @@ public class AddressService {
 
     public ResponseEntity<AddressGetDTO> create(AddressCreateDTO dto) {
         log.info("Attempting to create a new address with DTO: {}", dto);
-        City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("cityId"));
+        City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_CITY_NOT_FOUND, dto.cityId()));
         if (addressRepository.findByAddressAndAddress2AndDistrictAndCityAndPostalCodeAndPhone(dto.address(), dto.address2(), dto.district(), city, dto.postalCode(), dto.phone()).isPresent())
-            throw new DataIntegrityViolationException("Record with such fields already exists");
+            throw new DataIntegrityViolationException(ExceptionInfo.ADDRESS_ALREADY_EXISTS, dto.address(), dto.address2(), dto.district(), city, dto.postalCode(), dto.phone());
 
         Address address = addressMapper.toEntity(dto);
         address.setCity(city);
@@ -127,7 +128,7 @@ public class AddressService {
                 address.setDistrict(dto.district());
 
             if(dto.cityId() != null) {
-                City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException("cityId"));
+                City city = cityRepository.findById(dto.cityId()).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_CITY_NOT_FOUND, dto.cityId()));
                 address.setCity(city);
 
             }
@@ -142,7 +143,7 @@ public class AddressService {
             return ResponseEntity.ok().body(addressMapper.toGetDTO(address));
         }
         else{
-            throw new EntityNotFoundException("addressId");
+            throw new EntityNotFoundException(ExceptionInfo.ENTITY_ADDRESS_NOT_FOUND, id);
         }
     }
 

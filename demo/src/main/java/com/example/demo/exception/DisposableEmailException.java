@@ -4,14 +4,12 @@ import com.example.demo.exception.info.ExceptionInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class UnknownFilterParameterException extends UniversalException {
+public class DisposableEmailException extends UniversalException {
 
-    public UnknownFilterParameterException(ExceptionInfo exceptionInfo) {
+    public DisposableEmailException(ExceptionInfo exceptionInfo) {
         super(exceptionInfo);
     }
-
-    public UnknownFilterParameterException(ExceptionInfo exceptionInfo, Object... args) {
+    public DisposableEmailException(ExceptionInfo exceptionInfo, Object... args) {
         super(exceptionInfo,args);
     }
 }

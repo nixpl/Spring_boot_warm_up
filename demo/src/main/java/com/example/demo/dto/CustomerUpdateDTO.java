@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 
 import com.example.demo.model.Address;
+import com.example.demo.model.Gender;
 import jakarta.validation.constraints.*;
 
 public record CustomerUpdateDTO(
@@ -11,6 +12,8 @@ public record CustomerUpdateDTO(
 
                                  @Size(max = 45, message = "last_name cannot exceed 45 characters")
                                  String lastName,
+
+                                 Gender gender,
 
                                  @Size(max = 45, message = "email cannot exceed 45 characters")
                                  @Email
@@ -31,6 +34,7 @@ public record CustomerUpdateDTO(
                 "storeId=" + storeId +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", gender='" + gender + '\'' +
                 ", email='" + censoredEmail + '\'' +
                 ", addressId=" + addressId +
                 ", active=" + active +

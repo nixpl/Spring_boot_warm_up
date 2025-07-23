@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.info.ExceptionInfo;
 import com.example.demo.exception.UnknownFilterParameterException;
 import com.example.demo.specification.CountrySpecifications;
 import com.example.demo.dto.CountryCreateDTO;
@@ -8,7 +10,6 @@ import com.example.demo.dto.CountryUpdateDTO;
 import com.example.demo.mapper.CountryMapper;
 import com.example.demo.model.Country;
 import com.example.demo.repository.CountryRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -62,13 +63,13 @@ public class CountryService {
     private Specification<Country> createFilterSpecification(String key, String value) {
         return switch (key) {
             case "country" -> (root, query, cb) -> cb.equal(root.get("country"), value);
-            default -> throw new UnknownFilterParameterException(key);
+            default -> throw new UnknownFilterParameterException(ExceptionInfo.UNKNOWN_COUNTRY_FILTER_PARAMETER, key);
         };
     }
 
     public Country getById(Integer  id) {
         log.info("Attempting to retrieve country with ID: {}", id);
-        Country country = countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("countryId"));
+        Country country = countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_COUNTRY_NOT_FOUND, id));
         log.info("Successfully retrieved country with ID: {}", id);
         return country;
     }
@@ -87,7 +88,7 @@ public class CountryService {
 
     public ResponseEntity<Country> update(Integer  id, CountryUpdateDTO dto) {
         log.info("Attempting to update country with ID: {} using DTO: {}", id, dto);
-        Country country = countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("countryId"));
+        Country country = countryRepository.findById(id).orElseThrow(() -> new  EntityNotFoundException(ExceptionInfo.ENTITY_COUNTRY_NOT_FOUND, id));
         country.setCountry(dto.country());
         Country saved = countryRepository.save(country);
         log.info("Successfully updated country with ID: {}", saved.getCountryId());
@@ -103,7 +104,7 @@ public class CountryService {
             return ResponseEntity.ok().build();
         }
         else{
-            throw new EntityNotFoundException("countryId");
+            throw new  EntityNotFoundException(ExceptionInfo.ENTITY_COUNTRY_NOT_FOUND, id);
         }
     }
 }
