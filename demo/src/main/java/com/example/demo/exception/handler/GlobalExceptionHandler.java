@@ -1,6 +1,6 @@
 package com.example.demo.exception.handler;
 
-import com.example.demo.dto.UniversalExceptionResponseDTO;
+import com.example.demo.dto.exception.UniversalExceptionResponseDTO;
 import com.example.demo.exception.UniversalException;
 import com.example.demo.exception.info.ExceptionInfo;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;

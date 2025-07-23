@@ -1,9 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.annotations.ForCustomer;
-import com.example.demo.dto.CustomerCreateDTO;
-import com.example.demo.dto.CustomerGetDTO;
-import com.example.demo.dto.CustomerUpdateDTO;
+import com.example.demo.dto.customer.CustomerCreateDTO;
+import com.example.demo.dto.customer.CustomerGetDTO;
+import com.example.demo.dto.customer.CustomerUpdateDTO;
 import com.example.demo.mapper.CustomerMapper;
 import com.example.demo.model.Customer;
 import com.example.demo.service.CustomerService;

@@ -1,4 +1,6 @@
-package com.example.demo.dto;
+package com.example.demo.dto.address;
+
+import com.example.demo.dto.city.CityGetDTO;
 
 public record AddressGetDTO(
         Integer addressId,

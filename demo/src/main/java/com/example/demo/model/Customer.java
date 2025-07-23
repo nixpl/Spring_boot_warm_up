@@ -52,4 +52,10 @@ public class Customer {
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(columnDefinition = "gender_enum")
     private Gender gender;
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(customerId);
+    }
+
 }
