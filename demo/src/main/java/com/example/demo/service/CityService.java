@@ -74,14 +74,14 @@ public class CityService {
     }
 
 
-    public City getById(Integer id) {
+    public ResponseEntity<CityGetDTO> getById(Integer id) {
         log.info("Attempting to retrieve city with ID: {}", id);
         City city = cityRepository.findById(id).orElseThrow(() ->  new EntityNotFoundException(ExceptionInfo.ENTITY_CITY_NOT_FOUND, id));
         log.info("Successfully retrieved city with ID: {}", id);
-        return city;
+        return ResponseEntity.status(HttpStatus.OK).body(cityMapper.toGetDTO(city));
     }
 
-    public ResponseEntity<City> create(CityCreateDTO newCity) {
+    public ResponseEntity<CityGetDTO> create(CityCreateDTO newCity) {
         log.info("Attempting to create a new city with DTO: {}", newCity);
 
 //        Chyba niepotrzebne
@@ -99,10 +99,10 @@ public class CityService {
         log.info("Successfully created and saved city with ID: {}", saved.getCityId());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(saved);
+                .body(cityMapper.toGetDTO(saved));
     }
 
-    public ResponseEntity<City> update(Integer  id, CityUpdateDTO dto) {
+    public ResponseEntity<CityGetDTO> update(Integer  id, CityUpdateDTO dto) {
         log.info("Attempting to update city with ID: {} using DTO: {}", id, dto);
         City city = cityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_CITY_NOT_FOUND, id));
         Country country = countryRepository.findById(dto.countryId()).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_COUNTRY_NOT_FOUND, dto.countryId()));
@@ -115,16 +115,16 @@ public class CityService {
         city.setLastUpdate(new Date());
         City saved = cityRepository.save(city);
         log.info("Successfully updated city with ID: {}", saved.getCityId());
-        return ResponseEntity.ok().body(saved);
+        return ResponseEntity.ok().body(cityMapper.toGetDTO(saved));
     }
 
-    public ResponseEntity<City> delete(Integer id) {
+    public ResponseEntity<Void> delete(Integer id) {
         log.info("Attempting to delete city with ID: {}", id);
         Optional<City> city = cityRepository.findById(id);
         if(city.isPresent()){
             cityRepository.delete(city.get());
             log.info("Successfully deleted city with ID: {}", id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
         else{
             throw new EntityNotFoundException(ExceptionInfo.ENTITY_CITY_NOT_FOUND, id);

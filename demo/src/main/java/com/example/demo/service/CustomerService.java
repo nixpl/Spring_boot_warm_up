@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.api.DisifyApi;
-import com.example.demo.api.GenderizeApi;
+import com.example.demo.service.api.DisifyApi;
+import com.example.demo.service.api.GenderizeApi;
 import com.example.demo.exception.*;
 import com.example.demo.exception.info.ExceptionInfo;
 import com.example.demo.specification.CustomerSpecifications;
@@ -31,11 +31,15 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
     private final CustomerMapper mapper;
+    private final DisifyApi disifyApi;
+    private final GenderizeApi genderizeApi;
 
-    public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository, CustomerMapper mapper) {
+    public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository, CustomerMapper mapper, DisifyApi disifyApi, GenderizeApi genderizeApi) {
         this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
         this.mapper = mapper;
+        this.disifyApi = disifyApi;
+        this.genderizeApi = genderizeApi;
     }
 
     public Page<CustomerGetDTO> getAll(Map<String, String> params, Pageable pageable) {
@@ -88,11 +92,11 @@ public class CustomerService {
         };
     }
 
-    public CustomerGetDTO getById(Integer id) {
+    public ResponseEntity<CustomerGetDTO> getById(Integer id) {
         log.info("Attempting to retrieve customer with ID: {}", id);
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_CUSTOMER_NOT_FOUND, id));
         log.info("Successfully retrieved customer with ID: {}", id);
-        return mapper.toGetDTO(customer);
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.toGetDTO(customer));
     }
 
     public ResponseEntity<CustomerGetDTO> create(CustomerCreateDTO dto) {
@@ -102,10 +106,10 @@ public class CustomerService {
             throw new DataIntegrityViolationException(ExceptionInfo.CUSTOMER_EMAIL_TAKEN, dto.email());
         }
 
-        if (DisifyApi.isDisposable(dto.email())) {throw new DisposableEmailException(ExceptionInfo.CUSTOMER_EMAIL_IS_DISPOSABLE, dto.email());}
+        if (disifyApi.isDisposable(dto.email())) {throw new DisposableEmailException(ExceptionInfo.CUSTOMER_EMAIL_IS_DISPOSABLE, dto.email());}
 
         Customer customer = mapper.toEntity(dto);
-        customer.setGender(GenderizeApi.deduceGender(dto.firstName()));
+        customer.setGender(genderizeApi.deduceGender(dto.firstName()));
 
         Address address = addressRepository.findById(dto.addressId())
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_ADDRESS_NOT_FOUND, dto.addressId()));
@@ -121,13 +125,13 @@ public class CustomerService {
     }
 
 
-    public ResponseEntity<Customer> delete(Integer id) {
+    public ResponseEntity<Void> delete(Integer id) {
         log.info("Attempting to delete customer with ID: {}", id);
         Optional<Customer> customer = customerRepository.findById(id);
         if(customer.isPresent()){
             customerRepository.delete(customer.get());
             log.info("Successfully deleted customer with ID: {}", id);
-            return ResponseEntity.ok().build();      }
+            return ResponseEntity.noContent().build();      }
         else{
             throw new EntityNotFoundException(ExceptionInfo.ENTITY_CUSTOMER_NOT_FOUND, id);
         }

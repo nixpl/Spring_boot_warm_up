@@ -34,7 +34,7 @@ public class AddressController {
     }
 
     @GetMapping("/{id}")
-    public AddressGetDTO getAddress(@PathVariable Integer id){
+    public ResponseEntity<AddressGetDTO> getAddress(@PathVariable Integer id){
         log.info("Received request to get address with ID: {}", id);
         return addressService.getById(id);
     }
@@ -52,7 +52,7 @@ public class AddressController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Address> deleteAddress(@PathVariable Integer id){
+    public ResponseEntity<Void> deleteAddress(@PathVariable Integer id){
         log.info("Received request to delete address with ID: {}", id);
         return addressService.delete(id);
     }

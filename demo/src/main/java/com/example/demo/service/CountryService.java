@@ -67,14 +67,14 @@ public class CountryService {
         };
     }
 
-    public Country getById(Integer  id) {
+    public ResponseEntity<CountryGetDTO> getById(Integer  id) {
         log.info("Attempting to retrieve country with ID: {}", id);
         Country country = countryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_COUNTRY_NOT_FOUND, id));
         log.info("Successfully retrieved country with ID: {}", id);
-        return country;
+        return ResponseEntity.status(HttpStatus.OK).body(countryMapper.toGetDTO(country));
     }
 
-    public ResponseEntity<Country> create(CountryCreateDTO newCountry) {
+    public ResponseEntity<CountryGetDTO> create(CountryCreateDTO newCountry) {
         log.info("Attempting to create a new country with DTO: {}", newCountry);
         Country country = new Country();
         country.setCountry(newCountry.country());
@@ -83,25 +83,25 @@ public class CountryService {
         log.info("Successfully created and saved country with ID: {}", saved.getCountryId());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(saved);
+                .body(countryMapper.toGetDTO(saved));
     }
 
-    public ResponseEntity<Country> update(Integer  id, CountryUpdateDTO dto) {
+    public ResponseEntity<CountryGetDTO> update(Integer  id, CountryUpdateDTO dto) {
         log.info("Attempting to update country with ID: {} using DTO: {}", id, dto);
         Country country = countryRepository.findById(id).orElseThrow(() -> new  EntityNotFoundException(ExceptionInfo.ENTITY_COUNTRY_NOT_FOUND, id));
         country.setCountry(dto.country());
         Country saved = countryRepository.save(country);
         log.info("Successfully updated country with ID: {}", saved.getCountryId());
-        return ResponseEntity.ok().body(saved);
+        return ResponseEntity.ok().body(countryMapper.toGetDTO(saved));
     }
 
-    public ResponseEntity<Country> delete(Integer  id) {
+    public ResponseEntity<Void> delete(Integer  id) {
         log.info("Attempting to delete country with ID: {}", id);
         Optional<Country> country = countryRepository.findById(id);
         if(country.isPresent()){
             countryRepository.delete(country.get());
             log.info("Successfully deleted country with ID: {}", id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
         else{
             throw new  EntityNotFoundException(ExceptionInfo.ENTITY_COUNTRY_NOT_FOUND, id);
