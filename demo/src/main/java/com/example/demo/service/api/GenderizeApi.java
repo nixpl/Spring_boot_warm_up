@@ -1,10 +1,11 @@
-package com.example.demo.api;
+package com.example.demo.service.api;
 
 import com.example.demo.exception.ApiInputOutputException;
 import com.example.demo.exception.info.ExceptionInfo;
 import com.example.demo.model.Gender;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import okhttp3.*;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +14,19 @@ import java.io.IOException;
 @Service
 public class GenderizeApi {
 
-    private static final OkHttpClient client = new OkHttpClient();
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private final OkHttpClient client = new OkHttpClient();
 
-    public static Gender deduceGender(String first_name) {
-        String url = "https://api.genderize.io?name=" + first_name;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private final String url;
+
+    public GenderizeApi(@Value("${genderize.api.url}") String url) {
+        this.url = url;
+    }
+
+    public Gender deduceGender(String firstName) {
         Request request = new Request.Builder()
-                .url(url)
+                .url(url + firstName)
                 .get()
                 .build();
 

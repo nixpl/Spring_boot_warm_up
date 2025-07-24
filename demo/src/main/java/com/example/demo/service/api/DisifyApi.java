@@ -1,10 +1,12 @@
-package com.example.demo.api;
+package com.example.demo.service.api;
 
 import com.example.demo.exception.ApiInputOutputException;
 import com.example.demo.exception.info.ExceptionInfo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import okhttp3.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -12,13 +14,18 @@ import java.io.IOException;
 @Service
 public class DisifyApi {
 
-    private final static OkHttpClient client = new OkHttpClient();
-    private final static ObjectMapper objectMapper = new ObjectMapper();
+    private final OkHttpClient client = new OkHttpClient();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static boolean isDisposable(String email) {
-        String url = "https://disify.com/api/email/" + email;
+    private final String url;
+
+    public DisifyApi(@Value("${disify.api.url}") String url) {
+        this.url = url;
+    }
+
+    public boolean isDisposable(String email) {
         Request request = new Request.Builder()
-                .url(url)
+                .url(url + email)
                 .get()
                 .build();
 

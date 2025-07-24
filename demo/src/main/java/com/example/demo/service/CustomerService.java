@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.api.DisifyApi;
-import com.example.demo.api.GenderizeApi;
+import com.example.demo.service.api.DisifyApi;
+import com.example.demo.service.api.GenderizeApi;
 import com.example.demo.exception.*;
 import com.example.demo.exception.info.ExceptionInfo;
 import com.example.demo.specification.CustomerSpecifications;
@@ -31,11 +31,15 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
     private final CustomerMapper mapper;
+    private final DisifyApi disifyApi;
+    private final GenderizeApi genderizeApi;
 
-    public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository, CustomerMapper mapper) {
+    public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository, CustomerMapper mapper, DisifyApi disifyApi, GenderizeApi genderizeApi) {
         this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
         this.mapper = mapper;
+        this.disifyApi = disifyApi;
+        this.genderizeApi = genderizeApi;
     }
 
     public Page<CustomerGetDTO> getAll(Map<String, String> params, Pageable pageable) {
@@ -102,10 +106,10 @@ public class CustomerService {
             throw new DataIntegrityViolationException(ExceptionInfo.CUSTOMER_EMAIL_TAKEN, dto.email());
         }
 
-        if (DisifyApi.isDisposable(dto.email())) {throw new DisposableEmailException(ExceptionInfo.CUSTOMER_EMAIL_IS_DISPOSABLE, dto.email());}
+        if (disifyApi.isDisposable(dto.email())) {throw new DisposableEmailException(ExceptionInfo.CUSTOMER_EMAIL_IS_DISPOSABLE, dto.email());}
 
         Customer customer = mapper.toEntity(dto);
-        customer.setGender(GenderizeApi.deduceGender(dto.firstName()));
+        customer.setGender(genderizeApi.deduceGender(dto.firstName()));
 
         Address address = addressRepository.findById(dto.addressId())
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionInfo.ENTITY_ADDRESS_NOT_FOUND, dto.addressId()));
